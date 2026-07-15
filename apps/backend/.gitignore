@@ -29,6 +29,7 @@ lerna-debug.log*
 *.sublime-workspace
 .turbo
 tsconfig.build.tsbuildinfo
+tsconfig.node.tsbuildinfo
 
 # IDE - VSCode
 .vscode/*

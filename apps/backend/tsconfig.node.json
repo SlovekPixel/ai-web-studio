@@ -1,0 +1,10 @@
+{
+  "extends": "@repo/typescript-config/tsconfig.node",
+  "include": ["vite.config.ts"],
+  "compilerOptions": {
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "noEmit": true,
+    "types": ["node", "vite/client"]
+  }
+}

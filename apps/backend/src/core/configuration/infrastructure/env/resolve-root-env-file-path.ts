@@ -12,7 +12,9 @@ function findMonorepoRoot(startDir: string): string {
     currentDir = dirname(currentDir);
   }
 
-  throw new Error('Monorepo root not found. Expected pnpm-workspace.yaml in parent directories.');
+  throw new Error(
+    'Monorepo root not found. Expected pnpm-workspace.yaml in parent directories.',
+  );
 }
 
 export function resolveRootEnvFilePath(): string {

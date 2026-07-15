@@ -15,7 +15,7 @@
     },
     "outDir": "./dist",
     "noEmit": false,
-    "types": ["node"],
+    "types": ["node", "vite/client"],
     "sourceMap": true
   }
 }
