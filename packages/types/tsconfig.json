@@ -1,0 +1,12 @@
+{
+  "extends": "@repo/typescript-config/base",
+  "compilerOptions": {
+    "lib": ["ES2023"],
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "noEmit": false
+  },
+  "include": ["src"]
+}

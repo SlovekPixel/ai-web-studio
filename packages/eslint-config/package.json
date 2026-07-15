@@ -6,9 +6,11 @@
   "exports": {
     "./base": "./base.js",
     "./next-js": "./next.js",
-    "./react-internal": "./react-internal.js"
+    "./react-internal": "./react-internal.js",
+    "./monorepo-boundaries": "./monorepo-boundaries.js"
   },
   "devDependencies": {
+    "eslint-plugin-import": "^2.32.0",
     "@eslint/js": "^9.39.1",
     "@next/eslint-plugin-next": "^16.2.0",
     "eslint": "^9.39.1",

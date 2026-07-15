@@ -1,0 +1,26 @@
+{
+  "extends": "@repo/typescript-config/tsconfig.node",
+  "include": ["src"],
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "declaration": false,
+    "declarationMap": false,
+    "baseUrl": ".",
+    "paths": {
+      "~/*": ["src/*"]
+    },
+    "outDir": "./dist",
+    "noEmit": false,
+    "types": [
+      "node",
+      "vitest",
+      "vitest/globals",
+      "@types/multer"
+    ],
+    "sourceMap": true
+  }
+}

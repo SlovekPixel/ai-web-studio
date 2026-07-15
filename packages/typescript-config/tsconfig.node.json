@@ -1,0 +1,19 @@
+{
+  "extends": "./base.json",
+  "display": "Node",
+  "compilerOptions": {
+    "target": "ESNext",
+    "moduleResolution": "nodenext",
+    "module": "nodenext",
+    "strict": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "types": [
+      "node",
+      "vite",
+      "vitest",
+      "vitest/globals",
+      "@testing-library/jest-dom"
+    ]
+  }
+}

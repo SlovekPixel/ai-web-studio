@@ -3,13 +3,18 @@
   "private": true,
   "scripts": {
     "build": "turbo run build",
-    "dev": "turbo run dev",
+    "start": "turbo run start",
+    "start:dev": "turbo run start:dev",
     "lint": "turbo run lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "check-types": "turbo run check-types"
+    "test": "turbo run test",
+    "dev:frontend": "turbo run start:dev --filter=frontend",
+    "dev:backend": "turbo run start:dev --filter=backend",
+    "build:frontend": "turbo run build --filter=frontend",
+    "build:backend": "turbo run build --filter=backend"
   },
   "devDependencies": {
     "prettier": "^3.7.4",
+    "tslib": "^2.8.1",
     "turbo": "^2.10.3",
     "typescript": "5.9.2"
   },
