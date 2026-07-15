@@ -1,22 +1,15 @@
-import { resolve } from 'node:path';
-
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { APP_PIPE } from '@nestjs/core';
+import { ZodValidationPipe } from 'nestjs-zod';
 
-import { AuthModule } from '~/core/auth/auth.module';
+import { ConfigurationModule } from '~/core/configuration/configuration.module';
+import { AuthModule } from '~/modules/auth/auth.module';
 
 @Module({
-  imports: [
-    ConfigModule.forRoot({
-      envFilePath: [
-        resolve(process.cwd(), '../../.env'),
-        resolve(__dirname, '../../../.env'),
-      ],
-      isGlobal: true,
-    }),
-    AuthModule,
-  ],
-  controllers: [],
-  providers: [],
+  imports: [ConfigurationModule, AuthModule],
+  providers: [{
+    provide: APP_PIPE,
+    useClass: ZodValidationPipe,
+  }],
 })
 export class AppModule {}

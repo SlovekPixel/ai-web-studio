@@ -2,11 +2,14 @@
   "extends": "@repo/typescript-config/base",
   "compilerOptions": {
     "lib": ["ES2023"],
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "outDir": "./dist",
     "rootDir": "./src",
     "declaration": true,
-    "emitDeclarationOnly": true,
-    "noEmit": false
+    "declarationMap": true,
+    "noEmit": false,
+    "noEmitOnError": true
   },
   "include": ["src"]
 }

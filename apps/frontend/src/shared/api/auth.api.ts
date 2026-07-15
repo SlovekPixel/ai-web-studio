@@ -1,9 +1,9 @@
-import type { AuthResponse, LoginCredentials } from '@repo/types';
+import type { AuthRequestType, AuthResponseType } from '@repo/types';
 
 import { apiRequest } from '~/shared/api/client';
 
-export function login(credentials: LoginCredentials): Promise<AuthResponse> {
-  return apiRequest<AuthResponse>('/auth/login', {
+export function login(credentials: AuthRequestType): Promise<AuthResponseType> {
+  return apiRequest<AuthResponseType>('/auth/login', {
     method: 'POST',
     body: credentials,
   });

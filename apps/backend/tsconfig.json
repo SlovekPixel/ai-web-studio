@@ -5,22 +5,17 @@
     "target": "esnext",
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
+    "rootDir": "./src",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "declaration": false,
     "declarationMap": false,
-    "baseUrl": ".",
     "paths": {
-      "~/*": ["src/*"]
+      "~/*": ["./src/*"]
     },
     "outDir": "./dist",
     "noEmit": false,
-    "types": [
-      "node",
-      "vitest",
-      "vitest/globals",
-      "@types/multer"
-    ],
+    "types": ["node"],
     "sourceMap": true
   }
 }
