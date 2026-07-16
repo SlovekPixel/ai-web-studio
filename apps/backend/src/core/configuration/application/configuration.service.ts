@@ -14,7 +14,7 @@ export class ConfigurationService {
   }
 
   get port(): number {
-    return this.configService.get('PORT', { infer: true });
+    return this.configService.get('BACKEND_PORT', { infer: true });
   }
 
   get nodeEnv(): ConfigurationType['NODE_ENV'] {

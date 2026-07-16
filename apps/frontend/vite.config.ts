@@ -5,6 +5,10 @@ import react from "@vitejs/plugin-react";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const rootDir = path.resolve(__dirname, "../..");
+const frontendPort = Number(process.env.FRONTEND_PORT) || 5173;
+const apiProxyTarget =
+  process.env.VITE_API_PROXY_TARGET ||
+  `http://localhost:${process.env.BACKEND_PORT || 3000}`;
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -16,22 +20,24 @@ export default defineConfig({
     },
   },
   server: {
-    port: Number(process.env.VITE_PORT) || 5173,
+    host: "0.0.0.0",
+    port: frontendPort,
     strictPort: true,
     proxy: {
       "/api": {
-        target: process.env.VITE_API_PROXY_TARGET || "http://localhost:3000",
+        target: apiProxyTarget,
         changeOrigin: true,
         secure: false,
       },
     },
   },
   preview: {
-    port: Number(process.env.VITE_PORT) || 5173,
+    host: "0.0.0.0",
+    port: frontendPort,
     strictPort: true,
     proxy: {
       "/api": {
-        target: process.env.VITE_API_PROXY_TARGET || "http://localhost:3000",
+        target: apiProxyTarget,
         changeOrigin: true,
         secure: false,
       },

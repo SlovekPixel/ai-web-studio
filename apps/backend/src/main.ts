@@ -10,8 +10,9 @@ import { LoggerService } from '~/core/logging/application/logger.service';
 
 const GLOBAL_PREFIX = 'api';
 const IS_PRODUCTION = process.env.NODE_ENV === 'production';
+const ENABLE_SWAGGER = process.env.ENABLE_SWAGGER !== 'false';
 
-export const viteNodeApp =  NestFactory.create(AppModule);
+export const viteNodeApp = NestFactory.create(AppModule);
 
 async function bootstrap(): Promise<void> {
   const app = await viteNodeApp;
@@ -38,7 +39,10 @@ async function bootstrap(): Promise<void> {
       },
     });
 
-    logger.log(`Swagger documentation is available at http://${hostname}:${port}/${GLOBAL_PREFIX}/docs`, 'Bootstrap');
+    logger.log(
+      `Swagger documentation is available at http://${hostname}:${port}/${GLOBAL_PREFIX}/docs`,
+      'Bootstrap',
+    );
   }
 
   if (IS_PRODUCTION) {

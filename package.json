@@ -1,9 +1,16 @@
 {
   "name": "ai-web-studio",
+  "repository": "https://github.com/SlovekPixel/ai-web-studio",
+  "author": "Vyacheslav Gordeev",
+  "keywords": [
+    "ai",
+    "web",
+    "studio"
+  ],
   "private": true,
   "scripts": {
     "build": "turbo run build",
-    "start": "turbo run start",
+    "start": "turbo run start --filter=backend --filter=frontend",
     "start:dev": "turbo run start:dev --filter=backend --filter=frontend",
     "lint": "turbo run lint",
     "test": "turbo run test",

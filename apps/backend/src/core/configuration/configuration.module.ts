@@ -3,13 +3,11 @@ import { ConfigModule } from '@nestjs/config';
 
 import { ConfigurationService } from '~/core/configuration/application/configuration.service';
 import { ConfigurationSchema } from '~/core/configuration/domain/schemas/configuration.schema';
-import { resolveRootEnvFilePath } from '~/core/configuration/infrastructure/env/resolve-root-env-file-path';
 
 @Global()
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: resolveRootEnvFilePath(),
       isGlobal: true,
       validate: (config) => {
         const result = ConfigurationSchema.safeParse(config);
@@ -27,6 +25,6 @@ import { resolveRootEnvFilePath } from '~/core/configuration/infrastructure/env/
     }),
   ],
   providers: [ConfigurationService],
-  exports: [ConfigModule, ConfigurationService],
+  exports: [ConfigurationService],
 })
 export class ConfigurationModule {}

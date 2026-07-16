@@ -1,0 +1,27 @@
+# Dependencies and build caches
+node_modules
+**/node_modules
+.turbo
+**/.turbo
+dist
+**/dist
+coverage
+**/coverage
+
+# Git and IDE
+.git
+.gitignore
+.idea
+.vscode
+*.md
+
+# Local env (runtime vars come from compose)
+.env
+.env.*
+!.env.example
+
+# Tests and misc
+**/README.md
+**/*.spec.ts
+**/test
+apps/backend/test

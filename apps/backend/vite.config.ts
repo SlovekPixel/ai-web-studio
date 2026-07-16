@@ -10,21 +10,19 @@ const packageJson = JSON.parse(
   readFileSync(path.join(backendRoot, 'package.json'), 'utf-8'),
 ) as { version: string };
 
-const enableSwagger = process.env.ENABLE_SWAGGER !== 'false';
-
 export default defineConfig(({ command }) => ({
   envDir: rootDir,
   resolve: {
     alias: {
       '~': path.resolve(backendRoot, './src'),
+      '@repo/types': path.resolve(rootDir, 'packages/types/src/index.ts'),
     },
   },
   define: {
-    ENABLE_SWAGGER: enableSwagger,
     AI_WEB_STUDIO_VERSION: JSON.stringify(packageJson.version),
   },
   server: {
-    port: Number(process.env.PORT) || 3000,
+    port: Number(process.env.BACKEND_PORT) || 3000,
     strictPort: true,
   },
   plugins: [
