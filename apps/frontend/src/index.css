@@ -29,24 +29,29 @@ body {
   margin-top: 1.5rem;
 }
 
-.login-form {
+.auth-form {
   display: flex;
   flex-direction: column;
   gap: 1rem;
   margin-top: 1.5rem;
 }
 
-.login-form label {
+.auth-form label {
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
   font-size: 0.875rem;
 }
 
-.login-form input {
+.auth-form input {
   padding: 0.5rem 0.75rem;
   border: 1px solid #d4d4d8;
   border-radius: 0.375rem;
+}
+
+.auth-form-footer {
+  margin: 0;
+  font-size: 0.875rem;
 }
 
 .btn {

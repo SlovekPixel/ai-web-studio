@@ -4,14 +4,16 @@ import path from 'node:path';
 import { defineConfig } from 'vite';
 import { VitePluginNode } from 'vite-plugin-node';
 
+import { loadConfiguration } from './src/core/configuration/infrastructure/load-configuration';
+
 const backendRoot = process.cwd();
 const rootDir = path.resolve(backendRoot, '../..');
 const packageJson = JSON.parse(
   readFileSync(path.join(backendRoot, 'package.json'), 'utf-8'),
 ) as { version: string };
+const configuration = loadConfiguration();
 
 export default defineConfig(({ command }) => ({
-  envDir: rootDir,
   resolve: {
     alias: {
       '~': path.resolve(backendRoot, './src'),
@@ -22,7 +24,8 @@ export default defineConfig(({ command }) => ({
     AI_WEB_STUDIO_VERSION: JSON.stringify(packageJson.version),
   },
   server: {
-    port: Number(process.env.BACKEND_PORT) || 3000,
+    host: configuration.HOSTNAME,
+    port: configuration.BACKEND_PORT,
     strictPort: true,
   },
   plugins: [
@@ -59,12 +62,17 @@ export default defineConfig(({ command }) => ({
             '@nestjs/common',
             '@nestjs/config',
             '@nestjs/core',
+            '@nestjs/jwt',
             '@nestjs/platform-express',
             '@nestjs/swagger',
+            '@nestjs/typeorm',
+            'bcryptjs',
             'express',
             'nestjs-zod',
+            'pg',
             'reflect-metadata',
             'rxjs',
+            'typeorm',
             'winston',
             'zod',
           ],

@@ -9,8 +9,6 @@ import { ConfigurationService } from '~/core/configuration/application/configura
 import { LoggerService } from '~/core/logging/application/logger.service';
 
 const GLOBAL_PREFIX = 'api';
-const IS_PRODUCTION = process.env.NODE_ENV === 'production';
-const ENABLE_SWAGGER = process.env.ENABLE_SWAGGER !== 'false';
 
 export const viteNodeApp = NestFactory.create(AppModule);
 
@@ -20,13 +18,13 @@ async function bootstrap(): Promise<void> {
   app.setGlobalPrefix(GLOBAL_PREFIX);
 
   const configuration = app.get(ConfigurationService);
-
   const logger = app.get(LoggerService);
-  const { hostname, port } = configuration;
+  const { hostname, port, nodeEnv, enableSwagger } = configuration;
+  const isProduction = nodeEnv === 'production';
 
   i18nZod();
 
-  if (!IS_PRODUCTION || ENABLE_SWAGGER) {
+  if (!isProduction || enableSwagger) {
     const document = cleanupOpenApiDoc(
       SwaggerModule.createDocument(app, SwaggerConfig),
     );
@@ -45,7 +43,7 @@ async function bootstrap(): Promise<void> {
     );
   }
 
-  if (IS_PRODUCTION) {
+  if (isProduction) {
     await app.listen(port, hostname);
 
     logger.log(
@@ -54,7 +52,7 @@ async function bootstrap(): Promise<void> {
     );
   }
 
-  if (!IS_PRODUCTION) {
+  if (!isProduction) {
     logger.warn(
       `Application started at http://${hostname}:${port}/${GLOBAL_PREFIX}`,
       'Bootstrap',

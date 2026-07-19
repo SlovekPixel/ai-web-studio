@@ -30,7 +30,20 @@ export async function apiRequest<T>(
   });
 
   if (!response.ok) {
-    throw new ApiError(response.status, response.statusText);
+    let message = response.statusText;
+
+    try {
+      const errorBody = (await response.json()) as { message?: string | string[] };
+      if (Array.isArray(errorBody.message)) {
+        message = errorBody.message.join(', ');
+      } else if (errorBody.message) {
+        message = errorBody.message;
+      }
+    } catch {
+      // keep statusText
+    }
+
+    throw new ApiError(response.status, message);
   }
 
   return response.json() as Promise<T>;
