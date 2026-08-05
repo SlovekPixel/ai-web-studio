@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "display": "Base",
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+
+    "declaration": true,
+    "declarationMap": true,
+    "noEmit": true,
+    "noEmitOnError": true,
+    "inlineSources": false,
+    "preserveWatchOutput": true,
+
+    "strict": true,
+    "alwaysStrict": true,
+    "noImplicitAny": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noUncheckedIndexedAccess": true,
+    "noFallthroughCasesInSwitch": true,
+    "preserveConstEnums": true,
+    "strictNullChecks": true,
+    "resolveJsonModule": false,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "isolatedModules": true,
+
+    "experimentalDecorators": true,
+
+    "incremental": true,
+    "newLine": "lf",
+    "pretty": true,
+    "skipLibCheck": true,
+    "importHelpers": true
+  },
+  "exclude": ["node_modules", "dist", "build", "storybook-static"]
+}
+

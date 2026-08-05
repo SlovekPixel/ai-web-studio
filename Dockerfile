@@ -1,0 +1,31 @@
+ARG NODE_VERSION=22
+
+FROM node:${NODE_VERSION}-alpine AS base
+ENV PNPM_HOME=/pnpm
+ENV PATH=$PNPM_HOME:$PATH
+WORKDIR /app
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+RUN corepack enable && corepack install
+COPY apps/backend/package.json apps/backend/
+COPY packages/eslint-config/package.json packages/eslint-config/
+COPY packages/types/package.json packages/types/
+COPY packages/typescript-config/package.json packages/typescript-config/
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
+COPY turbo.json ./
+COPY packages ./packages
+
+FROM base AS build-backend
+COPY apps/backend ./apps/backend
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
+  pnpm build --filter=backend \
+  && pnpm deploy --filter=backend --prod /prod
+
+FROM node:${NODE_VERSION}-alpine AS backend
+ENV NODE_ENV=production
+WORKDIR /app
+COPY --from=build-backend /prod/package.json ./package.json
+COPY --from=build-backend /prod/node_modules ./node_modules
+COPY --from=build-backend /app/apps/backend/dist ./dist
+USER node
+EXPOSE 3000
+CMD ["node", "dist/main.js"]

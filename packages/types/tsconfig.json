@@ -1,0 +1,15 @@
+{
+  "extends": "@repo/typescript-config/base",
+  "compilerOptions": {
+    "lib": ["ES2023"],
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "declaration": true,
+    "declarationMap": true,
+    "noEmit": false,
+    "noEmitOnError": true
+  },
+  "include": ["src"]
+}

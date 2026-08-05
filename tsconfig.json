@@ -1,0 +1,10 @@
+{
+  "extends": "./packages/typescript-config/base.json",
+  "compilerOptions": {
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "allowJs": true,
+    "allowImportingTsExtensions": true
+  },
+  "include": ["**/*", "**/.*", "**/.*/**/*", "**/.*/**/.*"]
+}

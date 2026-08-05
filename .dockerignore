@@ -1,0 +1,19 @@
+# Build inputs are sources + manifests only; everything else stays out of the
+# context so it can neither slow down nor invalidate the build.
+**/node_modules
+**/dist
+**/.turbo
+**/coverage
+**/*.tsbuildinfo
+
+# Local env files: never bake secrets into the frontend bundle.
+# Runtime configuration comes from Docker Compose.
+.env*
+
+.git
+.gitignore
+.idea
+.vscode
+**/*.md
+**/*.spec.ts
+**/test

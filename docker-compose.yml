@@ -1,0 +1,13 @@
+services:
+  backend:
+    build:
+      context: .
+      target: backend
+    ports:
+      - "${BACKEND_PORT:-3000}:${BACKEND_PORT:-3000}"
+    environment:
+      BACKEND_HOSTNAME: 0.0.0.0
+      BACKEND_PORT: ${BACKEND_PORT:-3000}
+      NODE_ENV: ${NODE_ENV:-production}
+      ENABLE_SWAGGER: ${ENABLE_SWAGGER:-true}
+    restart: unless-stopped
