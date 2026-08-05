@@ -1,4 +1,25 @@
 services:
+  postgres:
+    image: postgres:16-alpine
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-ai_web_studio}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-ai_web_studio}
+      POSTGRES_DB: ${POSTGRES_DB:-ai_web_studio}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER:-ai_web_studio} -d ${POSTGRES_DB:-ai_web_studio}",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
   backend:
     build:
       context: .
@@ -10,4 +31,15 @@ services:
       BACKEND_PORT: ${BACKEND_PORT:-3000}
       NODE_ENV: ${NODE_ENV:-production}
       ENABLE_SWAGGER: ${ENABLE_SWAGGER:-true}
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: ${POSTGRES_USER:-ai_web_studio}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-ai_web_studio}
+      POSTGRES_DB: ${POSTGRES_DB:-ai_web_studio}
+    depends_on:
+      postgres:
+        condition: service_healthy
     restart: unless-stopped
+
+volumes:
+  postgres_data:

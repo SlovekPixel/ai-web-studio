@@ -1,6 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import type { IConfigurationService } from '~/core/configuration/domain/ports/configuration.service.port';
+import type {
+  DatabaseConfiguration,
+  IConfigurationService,
+} from '~/core/configuration/domain/ports/configuration.service.port';
 import type { ConfigurationType } from '~/core/configuration/domain/schemas/configuration.schema';
 
 export const CONFIGURATION = Symbol('CONFIGURATION');
@@ -29,5 +32,15 @@ export class ConfigurationService implements IConfigurationService {
 
   get enableSwagger(): boolean {
     return this.config.ENABLE_SWAGGER;
+  }
+
+  get database(): DatabaseConfiguration {
+    return {
+      host: this.config.POSTGRES_HOST,
+      port: this.config.POSTGRES_PORT,
+      username: this.config.POSTGRES_USER,
+      password: this.config.POSTGRES_PASSWORD,
+      database: this.config.POSTGRES_DB,
+    };
   }
 }

@@ -20,6 +20,6 @@ import { createWinstonLogger } from '~/core/logging/infrastructure/winston/creat
       useExisting: LoggerService,
     },
   ],
-  exports: [LoggerService, LOGGER_SERVICE, WINSTON_LOGGER],
+  exports: [LOGGER_SERVICE, LoggerService],
 })
 export class LoggingModule {}

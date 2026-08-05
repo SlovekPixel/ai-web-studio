@@ -20,6 +20,6 @@ import { loadConfiguration } from '~/core/configuration/infrastructure/load-conf
       useExisting: ConfigurationService,
     },
   ],
-  exports: [ConfigurationService, CONFIGURATION_SERVICE, CONFIGURATION],
+  exports: [CONFIGURATION_SERVICE, ConfigurationService],
 })
 export class ConfigurationModule {}

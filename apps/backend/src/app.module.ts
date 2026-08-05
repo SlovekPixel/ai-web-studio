@@ -3,11 +3,20 @@ import { APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { ZodValidationPipe } from 'nestjs-zod';
 
 import { ConfigurationModule } from '~/core/configuration/configuration.module';
+import { DatabaseModule } from '~/core/database/database.module';
 import { LoggingModule } from '~/core/logging/logging.module';
 import { HttpLoggingInterceptor } from '~/core/logging/presentation/interceptors/http-logging.interceptor';
+import { AuthModule } from '~/modules/auth/auth.module';
+import { UsersModule } from '~/modules/users/users.module';
 
 @Module({
-  imports: [ConfigurationModule, LoggingModule],
+  imports: [
+    ConfigurationModule,
+    LoggingModule,
+    DatabaseModule,
+    UsersModule,
+    AuthModule,
+  ],
   providers: [
     {
       provide: APP_PIPE,
