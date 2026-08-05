@@ -1,0 +1,5 @@
+{
+  "ERRORS": {
+    "USER_NOT_FOUND": "User {userUuid} does not exist"
+  }
+}

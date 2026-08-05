@@ -1,5 +1,9 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 
+import {
+  I18N_SERVICE,
+  type II18nService,
+} from '~/core/i18n/domain/ports/i18n.service.port';
 import type {
   PublicUser,
   User,
@@ -15,6 +19,8 @@ export class UserService {
   constructor(
     @Inject(USER_REPOSITORY)
     private readonly userRepository: IUserRepository,
+    @Inject(I18N_SERVICE)
+    private readonly i18nService: II18nService,
   ) {}
 
   async findAll(): Promise<PublicUser[]> {
@@ -26,9 +32,12 @@ export class UserService {
   async findByUuid(uuid: string): Promise<PublicUser> {
     const user = await this.userRepository.findByUuid(uuid);
 
-    if (!user) {
-      throw new NotFoundException(`User with uuid "${uuid}" not found`);
-    }
+    if (!user)
+      throw new NotFoundException(
+        this.i18nService.translate('ERRORS.USER_NOT_FOUND', {
+          userUuid: uuid,
+        }),
+      );
 
     return user.toPublic();
   }
