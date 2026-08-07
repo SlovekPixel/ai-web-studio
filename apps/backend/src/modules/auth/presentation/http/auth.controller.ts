@@ -15,7 +15,7 @@ export class AuthController {
   @ApiOperation({ summary: 'Register a new user' })
   @ApiOkResponse({ type: UserResponseDto })
   register(@Body() body: RegisterRequestDto): Promise<UserResponseDto> {
-    return this.authService.register(body.login, body.password);
+    return this.authService.register(body.login, body.password, body.fullName);
   }
 
   @Post('login')

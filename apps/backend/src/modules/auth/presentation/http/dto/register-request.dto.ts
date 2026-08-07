@@ -13,6 +13,12 @@ export const RegisterRequestSchema = z.object({
     .min(8)
     .max(128)
     .meta({ title: 'Password', example: 'password123' }),
+  fullName: z
+    .string()
+    .trim()
+    .min(1)
+    .max(255)
+    .meta({ title: 'Full Name', example: 'Frank Ocean' }),
 });
 
 export class RegisterRequestDto extends createZodDto(RegisterRequestSchema) {}

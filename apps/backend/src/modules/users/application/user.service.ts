@@ -29,24 +29,33 @@ export class UserService {
     return users.map((user) => user.toPublic());
   }
 
-  async findByUuid(uuid: string): Promise<PublicUser> {
-    const user = await this.userRepository.findByUuid(uuid);
+  async findById(id: string): Promise<PublicUser> {
+    const user = await this.userRepository.findById(id);
 
-    if (!user)
+    if (!user) {
       throw new NotFoundException(
         this.i18nService.translate('ERRORS.USER_NOT_FOUND', {
-          userUuid: uuid,
+          userId: id,
         }),
       );
+    }
 
     return user.toPublic();
   }
 
-  findByLogin(login: string): Promise<User | null> {
+  async findByLogin(login: string): Promise<User | null> {
     return this.userRepository.findByLogin(login);
   }
 
-  create(data: CreateUserData): Promise<User> {
+  async create(data: CreateUserData): Promise<User> {
     return this.userRepository.create(data);
+  }
+
+  async assignOrganization(userId: string, orgId: string): Promise<User> {
+    return this.userRepository.updateOrgId(userId, orgId);
+  }
+
+  async touchLoginAt(userId: string): Promise<User> {
+    return this.userRepository.updateLoginAt(userId, new Date());
   }
 }

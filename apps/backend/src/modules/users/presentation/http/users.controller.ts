@@ -16,12 +16,12 @@ export class UsersController {
     return this.userService.findAll();
   }
 
-  @Get(':uuid')
-  @ApiOperation({ summary: 'Get user by uuid' })
+  @Get(':id')
+  @ApiOperation({ summary: 'Get user by id' })
   @ApiOkResponse({ type: UserResponseDto })
-  findByUuid(
-    @Param('uuid', new ParseUUIDPipe({ version: '4' })) uuid: string,
+  findById(
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
   ): Promise<UserResponseDto> {
-    return this.userService.findByUuid(uuid);
+    return this.userService.findById(id);
   }
 }

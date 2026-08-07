@@ -1,7 +1,10 @@
 {
   "ERRORS": {
-    "USER_NOT_FOUND": "Пользователь {userUuid} не найден",
+    "USER_NOT_FOUND": "Пользователь {userId} не найден",
     "LOGIN_ALREADY_TAKEN": "Логин \"{login}\" уже занят",
-    "INVALID_CREDENTIALS": "Неверный логин или пароль"
+    "INVALID_CREDENTIALS": "Неверный логин или пароль",
+    "ORGANIZATION_NOT_FOUND": "Организация {organizationUuid} не найдена",
+    "ORGANIZATION_NAME_TAKEN": "Название организации \"{name}\" уже занято",
+    "ORGANIZATION_INN_TAKEN": "ИНН организации \"{inn}\" уже занят"
   }
 }

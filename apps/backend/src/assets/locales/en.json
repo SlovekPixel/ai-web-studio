@@ -1,7 +1,10 @@
 {
   "ERRORS": {
-    "USER_NOT_FOUND": "User {userUuid} does not exist",
+    "USER_NOT_FOUND": "User {userId} does not exist",
     "LOGIN_ALREADY_TAKEN": "Login \"{login}\" is already taken",
-    "INVALID_CREDENTIALS": "Invalid login or password"
+    "INVALID_CREDENTIALS": "Invalid login or password",
+    "ORGANIZATION_NOT_FOUND": "Organization {organizationUuid} does not exist",
+    "ORGANIZATION_NAME_TAKEN": "Organization name \"{name}\" is already taken",
+    "ORGANIZATION_INN_TAKEN": "Organization INN \"{inn}\" is already taken"
   }
 }

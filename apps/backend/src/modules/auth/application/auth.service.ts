@@ -26,7 +26,11 @@ export class AuthService {
     private readonly i18nService: II18nService,
   ) {}
 
-  async register(login: string, password: string): Promise<PublicUser> {
+  async register(
+    login: string,
+    password: string,
+    fullName: string,
+  ): Promise<PublicUser> {
     const existing = await this.userService.findByLogin(login);
 
     if (existing) {
@@ -36,7 +40,11 @@ export class AuthService {
     }
 
     const hashPassword = await this.passwordHasher.hash(password);
-    const user = await this.userService.create({ login, hashPassword });
+    const user = await this.userService.create({
+      login,
+      hashPassword,
+      fullName,
+    });
 
     return user.toPublic();
   }
@@ -61,6 +69,8 @@ export class AuthService {
       );
     }
 
-    return user.toPublic();
+    const updated = await this.userService.touchLoginAt(user.id);
+
+    return updated.toPublic();
   }
 }
