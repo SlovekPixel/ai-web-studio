@@ -9,9 +9,7 @@ import {
   I18N_SERVICE,
   type II18nService,
 } from '~/core/i18n/domain/ports/i18n.service.port';
-import type {
-  PublicOrganization,
-} from '~/modules/organizations/domain/entities/organization.entity';
+import type { PublicOrganization } from '~/modules/organizations/domain/entities/organization.entity';
 import {
   ORGANIZATION_REPOSITORY,
   type CreateOrganizationData,
@@ -81,10 +79,7 @@ export class OrganizationService {
     }
 
     const organization = await this.organizationRepository.create(data);
-    await this.userService.assignOrganization(
-      data.ownerId,
-      organization.uuid,
-    );
+    await this.userService.assignOrganization(data.ownerId, organization.uuid);
 
     return organization.toPublic();
   }

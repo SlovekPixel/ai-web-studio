@@ -11,10 +11,7 @@ export const OrganizationResponseSchema = z.object({
     .string()
     .nullable()
     .meta({ title: 'Description', example: 'Software company' }),
-  inn: z
-    .string()
-    .nullable()
-    .meta({ title: 'INN', example: '7707083893' }),
+  inn: z.string().nullable().meta({ title: 'INN', example: '7707083893' }),
   ownerId: z.uuid().meta({
     title: 'Owner ID',
     example: '123e4567-e89b-12d3-a456-426614174000',
