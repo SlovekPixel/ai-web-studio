@@ -8,6 +8,8 @@ import {
 } from '@nestjs/common';
 import type { Request, Response } from 'express';
 
+import type { ExceptionResponse } from '~/filters/dto/exception-response.dto';
+
 @Catch()
 @Injectable()
 export class AllExceptionsFilter implements ExceptionFilter {
@@ -27,13 +29,15 @@ export class AllExceptionsFilter implements ExceptionFilter {
 
     const { message, details } = this.extractErrorPayload(exception);
 
-    response.status(statusCode).json({
+    const body: ExceptionResponse = {
       statusCode,
       path: request.originalUrl.split('?')[0] ?? request.url,
       message,
       details,
       timestamp: new Date().toISOString(),
-    });
+    };
+
+    response.status(statusCode).json(body);
   }
 
   private extractErrorPayload(exception: unknown): {

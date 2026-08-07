@@ -7,13 +7,18 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
-import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 
 import { OrganizationService } from '~/modules/organizations/application/organization.service';
 import { AddOrganizationUserRequestDto } from '~/modules/organizations/presentation/http/dto/add-organization-user-request.dto';
 import { CreateOrganizationRequestDto } from '~/modules/organizations/presentation/http/dto/create-organization-request.dto';
 import { OrganizationResponseDto } from '~/modules/organizations/presentation/http/dto/organization-response.dto';
 import { UpdateOrganizationRequestDto } from '~/modules/organizations/presentation/http/dto/update-organization-request.dto';
+import { AddUserSwagger } from '~/modules/organizations/presentation/http/swagger/add-user.swagger';
+import { CreateSwagger } from '~/modules/organizations/presentation/http/swagger/create.swagger';
+import { FindAllSwagger } from '~/modules/organizations/presentation/http/swagger/find-all.swagger';
+import { FindByUuidSwagger } from '~/modules/organizations/presentation/http/swagger/find-by-uuid.swagger';
+import { UpdateSwagger } from '~/modules/organizations/presentation/http/swagger/update.swagger';
 import { UserResponseDto } from '~/modules/users/presentation/http/dto/user-response.dto';
 
 @ApiTags('organizations')
@@ -22,15 +27,13 @@ export class OrganizationsController {
   constructor(private readonly organizationService: OrganizationService) {}
 
   @Get()
-  @ApiOperation({ summary: 'Get all organizations' })
-  @ApiOkResponse({ type: [OrganizationResponseDto] })
+  @FindAllSwagger()
   findAll(): Promise<OrganizationResponseDto[]> {
     return this.organizationService.findAll();
   }
 
   @Get(':uuid')
-  @ApiOperation({ summary: 'Get organization by uuid' })
-  @ApiOkResponse({ type: OrganizationResponseDto })
+  @FindByUuidSwagger()
   findByUuid(
     @Param('uuid', new ParseUUIDPipe({ version: '4' })) uuid: string,
   ): Promise<OrganizationResponseDto> {
@@ -38,8 +41,7 @@ export class OrganizationsController {
   }
 
   @Post()
-  @ApiOperation({ summary: 'Create organization' })
-  @ApiOkResponse({ type: OrganizationResponseDto })
+  @CreateSwagger()
   create(
     @Body() body: CreateOrganizationRequestDto,
   ): Promise<OrganizationResponseDto> {
@@ -52,8 +54,7 @@ export class OrganizationsController {
   }
 
   @Patch(':uuid')
-  @ApiOperation({ summary: 'Update organization' })
-  @ApiOkResponse({ type: OrganizationResponseDto })
+  @UpdateSwagger()
   update(
     @Param('uuid', new ParseUUIDPipe({ version: '4' })) uuid: string,
     @Body() body: UpdateOrganizationRequestDto,
@@ -67,8 +68,7 @@ export class OrganizationsController {
   }
 
   @Post(':uuid/users')
-  @ApiOperation({ summary: 'Add user to organization' })
-  @ApiOkResponse({ type: UserResponseDto })
+  @AddUserSwagger()
   addUser(
     @Param('uuid', new ParseUUIDPipe({ version: '4' })) uuid: string,
     @Body() body: AddOrganizationUserRequestDto,
