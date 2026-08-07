@@ -1,5 +1,7 @@
 {
   "ERRORS": {
-    "USER_NOT_FOUND": "Пользователь {userUuid} не найден"
+    "USER_NOT_FOUND": "Пользователь {userUuid} не найден",
+    "LOGIN_ALREADY_TAKEN": "Логин \"{login}\" уже занят",
+    "INVALID_CREDENTIALS": "Неверный логин или пароль"
   }
 }

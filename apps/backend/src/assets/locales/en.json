@@ -1,5 +1,7 @@
 {
   "ERRORS": {
-    "USER_NOT_FOUND": "User {userUuid} does not exist"
+    "USER_NOT_FOUND": "User {userUuid} does not exist",
+    "LOGIN_ALREADY_TAKEN": "Login \"{login}\" is already taken",
+    "INVALID_CREDENTIALS": "Invalid login or password"
   }
 }
