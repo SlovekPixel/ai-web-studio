@@ -1,11 +1,11 @@
+import type { RegisterRequestType } from '@repo/types';
+
 import type { User } from '~/modules/users/domain/entities/user.entity';
 
-export interface CreateUserData {
-  login: string;
+export type CreateUserData = Pick<RegisterRequestType, 'login' | 'fullName'> & {
   hashPassword: string;
-  fullName: string;
   email?: string | null;
-}
+};
 
 export interface IUserRepository {
   findAll(): Promise<User[]>;

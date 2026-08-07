@@ -5,6 +5,8 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 
+import type { PublicUserType } from '@repo/types';
+
 import {
   I18N_SERVICE,
   type II18nService,
@@ -14,7 +16,6 @@ import {
   type IPasswordHasher,
 } from '~/modules/auth/domain/ports/password-hasher.port';
 import { UserService } from '~/modules/users/application/user.service';
-import type { PublicUser } from '~/modules/users/domain/entities/user.entity';
 
 @Injectable()
 export class AuthService {
@@ -30,7 +31,7 @@ export class AuthService {
     login: string,
     password: string,
     fullName: string,
-  ): Promise<PublicUser> {
+  ): Promise<PublicUserType> {
     const existing = await this.userService.findByLogin(login);
 
     if (existing) {
@@ -49,7 +50,7 @@ export class AuthService {
     return user.toPublic();
   }
 
-  async login(login: string, password: string): Promise<PublicUser> {
+  async login(login: string, password: string): Promise<PublicUserType> {
     const user = await this.userService.findByLogin(login);
 
     if (!user) {

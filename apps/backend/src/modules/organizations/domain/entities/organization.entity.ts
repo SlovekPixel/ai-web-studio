@@ -1,13 +1,4 @@
-export interface PublicOrganization {
-  uuid: string;
-  name: string;
-  description: string | null;
-  inn: string | null;
-  ownerId: string;
-  active: boolean;
-  createdAt: string;
-  updatedAt: string;
-}
+import type { PublicOrganizationType } from '@repo/types';
 
 export class Organization {
   constructor(
@@ -21,7 +12,7 @@ export class Organization {
     public readonly updatedAt: Date,
   ) {}
 
-  toPublic(): PublicOrganization {
+  toPublic(): PublicOrganizationType {
     return {
       uuid: this.uuid,
       name: this.name,

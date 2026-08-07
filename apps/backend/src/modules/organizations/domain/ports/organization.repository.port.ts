@@ -1,16 +1,19 @@
+import type {
+  CreateOrganizationRequestType,
+  UpdateOrganizationRequestType,
+} from '@repo/types';
+
 import type { Organization } from '~/modules/organizations/domain/entities/organization.entity';
 
-export interface CreateOrganizationData {
-  name: string;
+/** Normalized create payload after HTTP optional fields are resolved to null. */
+export type CreateOrganizationData = {
+  name: CreateOrganizationRequestType['name'];
+  ownerId: CreateOrganizationRequestType['ownerId'];
   description: string | null;
   inn: string | null;
-  ownerId: string;
-}
+};
 
-export interface UpdateOrganizationData {
-  name?: string;
-  description?: string | null;
-}
+export type UpdateOrganizationData = UpdateOrganizationRequestType;
 
 export interface IOrganizationRepository {
   findAll(): Promise<Organization[]>;

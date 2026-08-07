@@ -1,13 +1,11 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import type { PublicUserType } from '@repo/types';
 
 import {
   I18N_SERVICE,
   type II18nService,
 } from '~/core/i18n/domain/ports/i18n.service.port';
-import type {
-  PublicUser,
-  User,
-} from '~/modules/users/domain/entities/user.entity';
+import type { User } from '~/modules/users/domain/entities/user.entity';
 import {
   USER_REPOSITORY,
   type CreateUserData,
@@ -23,13 +21,13 @@ export class UserService {
     private readonly i18nService: II18nService,
   ) {}
 
-  async findAll(): Promise<PublicUser[]> {
+  async findAll(): Promise<PublicUserType[]> {
     const users = await this.userRepository.findAll();
 
     return users.map((user) => user.toPublic());
   }
 
-  async findById(id: string): Promise<PublicUser> {
+  async findById(id: string): Promise<PublicUserType> {
     const user = await this.userRepository.findById(id);
 
     if (!user) {

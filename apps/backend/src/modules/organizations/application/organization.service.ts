@@ -5,11 +5,12 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 
+import type { PublicOrganizationType, PublicUserType } from '@repo/types';
+
 import {
   I18N_SERVICE,
   type II18nService,
 } from '~/core/i18n/domain/ports/i18n.service.port';
-import type { PublicOrganization } from '~/modules/organizations/domain/entities/organization.entity';
 import {
   ORGANIZATION_REPOSITORY,
   type CreateOrganizationData,
@@ -17,7 +18,6 @@ import {
   type UpdateOrganizationData,
 } from '~/modules/organizations/domain/ports/organization.repository.port';
 import { UserService } from '~/modules/users/application/user.service';
-import type { PublicUser } from '~/modules/users/domain/entities/user.entity';
 
 @Injectable()
 export class OrganizationService {
@@ -29,13 +29,13 @@ export class OrganizationService {
     private readonly i18nService: II18nService,
   ) {}
 
-  async findAll(): Promise<PublicOrganization[]> {
+  async findAll(): Promise<PublicOrganizationType[]> {
     const organizations = await this.organizationRepository.findAll();
 
     return organizations.map((organization) => organization.toPublic());
   }
 
-  async findByUuid(uuid: string): Promise<PublicOrganization> {
+  async findByUuid(uuid: string): Promise<PublicOrganizationType> {
     const organization = await this.organizationRepository.findByUuid(uuid);
 
     if (!organization) {
@@ -49,7 +49,7 @@ export class OrganizationService {
     return organization.toPublic();
   }
 
-  async create(data: CreateOrganizationData): Promise<PublicOrganization> {
+  async create(data: CreateOrganizationData): Promise<PublicOrganizationType> {
     await this.userService.findById(data.ownerId);
 
     const existingByName = await this.organizationRepository.findByName(
@@ -87,7 +87,7 @@ export class OrganizationService {
   async update(
     uuid: string,
     data: UpdateOrganizationData,
-  ): Promise<PublicOrganization> {
+  ): Promise<PublicOrganizationType> {
     const organization = await this.organizationRepository.findByUuid(uuid);
 
     if (!organization) {
@@ -117,7 +117,10 @@ export class OrganizationService {
     return updated.toPublic();
   }
 
-  async addUser(organizationUuid: string, userId: string): Promise<PublicUser> {
+  async addUser(
+    organizationUuid: string,
+    userId: string,
+  ): Promise<PublicUserType> {
     await this.findByUuid(organizationUuid);
     await this.userService.findById(userId);
 

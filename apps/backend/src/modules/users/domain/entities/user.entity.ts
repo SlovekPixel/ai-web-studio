@@ -1,20 +1,6 @@
-import type {
-  Organization,
-  PublicOrganization,
-} from '~/modules/organizations/domain/entities/organization.entity';
+import type { PublicUserType } from '@repo/types';
 
-export interface PublicUser {
-  id: string;
-  login: string;
-  email: string | null;
-  fullName: string;
-  active: boolean;
-  orgId: string | null;
-  organization: PublicOrganization | null;
-  loginAt: string | null;
-  createdAt: string;
-  updatedAt: string;
-}
+import type { Organization } from '~/modules/organizations/domain/entities/organization.entity';
 
 export class User {
   constructor(
@@ -31,7 +17,7 @@ export class User {
     public readonly updatedAt: Date,
   ) {}
 
-  toPublic(): PublicUser {
+  toPublic(): PublicUserType {
     return {
       id: this.id,
       login: this.login,
