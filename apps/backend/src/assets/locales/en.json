@@ -6,6 +6,7 @@
     "INVALID_TOKEN": "Invalid or expired access token",
     "INVALID_REFRESH_TOKEN": "Invalid or expired refresh token",
     "UNAUTHORIZED": "Unauthorized",
+    "FORBIDDEN": "Access denied",
     "ORGANIZATION_NOT_FOUND": "Organization {organizationUuid} does not exist",
     "ORGANIZATION_NAME_TAKEN": "Organization name \"{name}\" is already taken",
     "ORGANIZATION_INN_TAKEN": "Organization INN \"{inn}\" is already taken"

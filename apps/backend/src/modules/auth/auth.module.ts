@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { APP_GUARD } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 
@@ -16,6 +17,8 @@ import { NestJsJwtTokenService } from '~/modules/auth/infrastructure/jwt/nestjs-
 import { JwtStrategy } from '~/modules/auth/infrastructure/passport/jwt.strategy';
 import { RedisAuthSessionStore } from '~/modules/auth/infrastructure/redis/redis-auth-session.store';
 import { AuthController } from '~/modules/auth/presentation/http/auth.controller';
+import { AuthorizationGuard } from '~/modules/auth/presentation/http/guards/authorization.guard';
+import { JwtAuthGuard } from '~/modules/auth/presentation/http/guards/jwt-auth.guard';
 import { UsersModule } from '~/modules/users/users.module';
 
 @Module({
@@ -44,6 +47,14 @@ import { UsersModule } from '~/modules/users/users.module';
     {
       provide: AUTH_SESSION_STORE,
       useClass: RedisAuthSessionStore,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: AuthorizationGuard,
     },
   ],
   exports: [PassportModule, JwtModule, TOKEN_SERVICE, AUTH_SESSION_STORE],

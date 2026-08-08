@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
+import { IsAdmin } from '~/modules/auth/presentation/http/decorators/is-admin.decorator';
 import { AddUserToOrganizationUseCase } from '~/modules/organizations/application/use-cases/add-user-to-organization.use-case';
 import { CreateOrganizationUseCase } from '~/modules/organizations/application/use-cases/create-organization.use-case';
 import { FindAllOrganizationsUseCase } from '~/modules/organizations/application/use-cases/find-all-organizations.use-case';
@@ -26,6 +27,7 @@ import { UpdateSwagger } from '~/modules/organizations/presentation/http/swagger
 import { UserResponseDto } from '~/modules/users/presentation/http/dto/user-response.dto';
 
 @ApiTags('organizations')
+@IsAdmin()
 @Controller('organizations')
 export class OrganizationsController {
   constructor(

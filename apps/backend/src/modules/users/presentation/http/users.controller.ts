@@ -1,11 +1,21 @@
-import { Controller, Get, Param, ParseUUIDPipe } from '@nestjs/common';
+import { Controller, Get, Inject, Param, ParseUUIDPipe } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
+import type { PublicUserType } from '@repo/types';
+
+import {
+  LOGGER_SERVICE,
+  type ILoggerService,
+} from '~/core/logging/domain/ports/logger.service.port';
+import { CurrentUser } from '~/modules/auth/presentation/http/decorators/current-user.decorator';
+import { IsAdmin } from '~/modules/auth/presentation/http/decorators/is-admin.decorator';
+import { IsUser } from '~/modules/auth/presentation/http/decorators/is-user.decorator';
 import { FindAllUsersUseCase } from '~/modules/users/application/use-cases/find-all-users.use-case';
 import { FindUserByIdUseCase } from '~/modules/users/application/use-cases/find-user-by-id.use-case';
 import { UserResponseDto } from '~/modules/users/presentation/http/dto/user-response.dto';
 import { FindAllSwagger } from '~/modules/users/presentation/http/swagger/find-all.swagger';
 import { FindByIdSwagger } from '~/modules/users/presentation/http/swagger/find-by-id.swagger';
+import { FindMeSwagger } from '~/modules/users/presentation/http/swagger/find-me.swagger';
 
 @ApiTags('users')
 @Controller('users')
@@ -13,15 +23,30 @@ export class UsersController {
   constructor(
     private readonly findAllUsersUseCase: FindAllUsersUseCase,
     private readonly findUserByIdUseCase: FindUserByIdUseCase,
+    @Inject(LOGGER_SERVICE)
+    private readonly logger: ILoggerService,
   ) {}
 
+  @Get('me')
+  @IsUser()
+  @FindMeSwagger()
+  me(@CurrentUser() user: PublicUserType): UserResponseDto {
+    this.logger.log(
+      `Current user requested /users/me: ${user.id}`,
+      UsersController.name,
+    );
+    return user;
+  }
+
   @Get()
+  @IsAdmin()
   @FindAllSwagger()
   findAll(): Promise<UserResponseDto[]> {
     return this.findAllUsersUseCase.execute();
   }
 
   @Get(':id')
+  @IsAdmin()
   @FindByIdSwagger()
   findById(
     @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,

@@ -1,4 +1,5 @@
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
+import { ContextIdFactory, ModuleRef } from '@nestjs/core';
 import { PassportStrategy } from '@nestjs/passport';
 import type { Request } from 'express';
 import { ExtractJwt, Strategy } from 'passport-jwt';
@@ -14,11 +15,11 @@ import {
   I18N_SERVICE,
   type II18nService,
 } from '~/core/i18n/domain/ports/i18n.service.port';
+import { ACCESS_TOKEN_COOKIE } from '~/modules/auth/domain/constants/auth-cookies';
 import {
   AUTH_SESSION_STORE,
   type IAuthSessionStore,
 } from '~/modules/auth/domain/ports/auth-session-store.port';
-import { ACCESS_TOKEN_COOKIE } from '~/modules/auth/domain/constants/auth-cookies';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
@@ -27,8 +28,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     config: IConfigurationService,
     @Inject(AUTH_SESSION_STORE)
     private readonly sessionStore: IAuthSessionStore,
-    @Inject(I18N_SERVICE)
-    private readonly i18nService: II18nService,
+    private readonly moduleRef: ModuleRef,
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
@@ -42,15 +42,20 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
       ]),
       ignoreExpiration: false,
       secretOrKey: config.jwt.accessSecret,
+      passReqToCallback: true,
     });
   }
 
-  async validate(payload: AccessTokenPayloadType): Promise<PublicUserType> {
+  async validate(
+    request: Request,
+    payload: AccessTokenPayloadType,
+  ): Promise<PublicUserType> {
+    const i18nService = await this.resolveI18n(request);
     const parsed = AccessTokenPayloadSchema.safeParse(payload);
 
     if (!parsed.success || parsed.data.typ !== 'access') {
       throw new UnauthorizedException(
-        this.i18nService.translate('ERRORS.INVALID_TOKEN'),
+        i18nService.translate('ERRORS.INVALID_TOKEN'),
       );
     }
 
@@ -60,7 +65,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
 
     if (isBlacklisted) {
       throw new UnauthorizedException(
-        this.i18nService.translate('ERRORS.INVALID_TOKEN'),
+        i18nService.translate('ERRORS.INVALID_TOKEN'),
       );
     }
 
@@ -73,12 +78,19 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
 
       if (issuedAtMs !== null && issuedAtMs <= revokeBefore) {
         throw new UnauthorizedException(
-          this.i18nService.translate('ERRORS.INVALID_TOKEN'),
+          i18nService.translate('ERRORS.INVALID_TOKEN'),
         );
       }
     }
 
     return parsed.data.user;
+  }
+
+  private async resolveI18n(request: Request): Promise<II18nService> {
+    const contextId = ContextIdFactory.getByRequest(request);
+    return this.moduleRef.resolve<II18nService>(I18N_SERVICE, contextId, {
+      strict: false,
+    });
   }
 
   private getIssuedAtMs(payload: AccessTokenPayloadType): number | null {

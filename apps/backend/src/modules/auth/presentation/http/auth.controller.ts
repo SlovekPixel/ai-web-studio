@@ -28,6 +28,7 @@ import {
 } from '~/modules/auth/presentation/http/cookies/auth-cookies';
 import { LoginRequestDto } from '~/modules/auth/presentation/http/dto/login-request.dto';
 import { RegisterRequestDto } from '~/modules/auth/presentation/http/dto/register-request.dto';
+import { IsPublic } from '~/modules/auth/presentation/http/decorators/is-public.decorator';
 import { LoginSwagger } from '~/modules/auth/presentation/http/swagger/login.swagger';
 import { LogoutAllSwagger } from '~/modules/auth/presentation/http/swagger/logout-all.swagger';
 import { LogoutSwagger } from '~/modules/auth/presentation/http/swagger/logout.swagger';
@@ -52,6 +53,7 @@ export class AuthController {
   }
 
   @Post('register')
+  @IsPublic()
   @HttpCode(HttpStatus.CREATED)
   @RegisterSwagger()
   async register(
@@ -67,6 +69,7 @@ export class AuthController {
   }
 
   @Post('login')
+  @IsPublic()
   @HttpCode(HttpStatus.NO_CONTENT)
   @LoginSwagger()
   async login(
@@ -78,6 +81,7 @@ export class AuthController {
   }
 
   @Post('refresh')
+  @IsPublic()
   @HttpCode(HttpStatus.NO_CONTENT)
   @RefreshSwagger()
   async refresh(
@@ -91,6 +95,7 @@ export class AuthController {
   }
 
   @Post('logout')
+  @IsPublic()
   @HttpCode(HttpStatus.NO_CONTENT)
   @LogoutSwagger()
   async logout(
@@ -105,6 +110,7 @@ export class AuthController {
   }
 
   @Post('logout-all')
+  @IsPublic()
   @HttpCode(HttpStatus.NO_CONTENT)
   @LogoutAllSwagger()
   async logoutAll(

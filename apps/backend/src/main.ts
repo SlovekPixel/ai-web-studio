@@ -24,7 +24,6 @@ loadConfiguration();
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
-  app.set('trust proxy', 1);
   app.use(cookieParser());
   app.setGlobalPrefix(GLOBAL_PREFIX);
 
