@@ -12,7 +12,7 @@ import { useMe } from "@/features/users/hooks/use-me";
 export default function OrganizationByUuidPage() {
   const params = useParams<{ uuid: string }>();
   const me = useMe();
-  const canFetchAsAdmin = Boolean(me.data && me.data.orgId === null);
+  const canFetchAsAdmin = Boolean(me.data?.isAdmin);
 
   const organizationFromMe =
     me.data?.organization?.uuid === params.uuid ? me.data.organization : null;

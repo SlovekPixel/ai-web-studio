@@ -1,8 +1,8 @@
 "use client";
 
 import { AppShell } from "@/components/layout/app-shell";
-import { ProfileDetails } from "@/features/users/components/profile-details";
 import { QueryState } from "@/components/shared/query-state";
+import { ProfileDetails } from "@/features/users/components/profile-details";
 import { useMe } from "@/features/users/hooks/use-me";
 
 export default function ProfilePage() {

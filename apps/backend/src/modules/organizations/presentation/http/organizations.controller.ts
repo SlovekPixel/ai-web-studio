@@ -76,6 +76,7 @@ export class OrganizationsController {
       ...(body.description !== undefined
         ? { description: body.description }
         : {}),
+      ...(body.active !== undefined ? { active: body.active } : {}),
     });
   }
 

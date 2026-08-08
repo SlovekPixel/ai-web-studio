@@ -34,6 +34,7 @@ export const PublicUserSchema = z.object({
     title: 'Organization ID',
     example: uuidExample,
   }),
+  isAdmin: z.boolean().meta({ title: 'Is Admin', example: true }),
   organization: PublicOrganizationSchema.nullable().meta({
     title: 'Organization',
   }),
@@ -48,3 +49,22 @@ export const PublicUserSchema = z.object({
     .datetime()
     .meta({ title: 'Updated At', example: '2026-01-01T00:00:00.000Z' }),
 });
+
+export const UpdateUserRequestSchema = z.object({
+  active: z.boolean().meta({ title: 'Active', example: true }),
+});
+
+export const UpdateMeRequestSchema = z
+  .object({
+    fullName: userFullNameSchema.optional(),
+    email: z
+      .email()
+      .meta({ title: 'Email', example: 'frank@example.com' })
+      .optional(),
+  })
+  .refine(
+    (value) => value.fullName !== undefined || value.email !== undefined,
+    {
+      message: 'At least one of fullName or email must be provided',
+    },
+  );

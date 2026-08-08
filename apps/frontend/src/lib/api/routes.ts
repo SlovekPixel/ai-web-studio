@@ -8,6 +8,8 @@ export const apiRoutes = {
   },
   users: {
     me: "/api/users/me",
+    root: "/api/users",
+    byId: (id: string) => `/api/users/${id}`,
   },
   organizations: {
     root: "/api/organizations",

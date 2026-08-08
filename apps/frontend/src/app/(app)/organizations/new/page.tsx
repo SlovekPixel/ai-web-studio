@@ -1,31 +1,39 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+
 import { AppShell } from "@/components/layout/app-shell";
-import { OrganizationForm } from "@/features/organizations/components/organization-form";
 import { QueryState } from "@/components/shared/query-state";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useMe } from "@/features/users/hooks/use-me";
 
 export default function NewOrganizationPage() {
   const me = useMe();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (me.data?.isAdmin) {
+      router.replace("/admin/organizations/new");
+    }
+  }, [me.data, router]);
 
   return (
     <AppShell
       title="Создание организации"
-      description="Новая организация с вами в роли владельца"
+      description="Создание организаций доступно в разделе администрирования"
     >
       <div className="mx-auto w-full max-w-2xl">
         <QueryState isLoading={me.isLoading} error={me.error}>
-          {me.data?.orgId ? (
+          {me.data?.isAdmin ? null : (
             <Alert>
-              <AlertTitle>Организация уже назначена</AlertTitle>
+              <AlertTitle>Недостаточно прав</AlertTitle>
               <AlertDescription>
-                Создание доступно только пользователям без организации.
+                Создание организаций доступно только администраторам в разделе
+                «Управление организациями».
               </AlertDescription>
             </Alert>
-          ) : me.data ? (
-            <OrganizationForm mode="create" ownerId={me.data.id} />
-          ) : null}
+          )}
         </QueryState>
       </div>
     </AppShell>

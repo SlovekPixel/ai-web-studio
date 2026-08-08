@@ -7,6 +7,7 @@ import { User } from '~/modules/users/domain/entities/user.entity';
 import type {
   CreateUserData,
   IUserRepository,
+  UpdateProfileData,
 } from '~/modules/users/domain/ports/user.repository.port';
 import { UserOrmEntity } from '~/modules/users/infrastructure/persistence/typeorm/user.orm-entity';
 
@@ -38,6 +39,15 @@ export class TypeOrmUserRepository implements IUserRepository {
   async findByLogin(login: string): Promise<User | null> {
     const entity = await this.usersRepository.findOne({
       where: { login },
+      relations: { organization: true },
+    });
+
+    return entity ? entity.toDomain() : null;
+  }
+
+  async findByEmail(email: string): Promise<User | null> {
+    const entity = await this.usersRepository.findOne({
+      where: { email },
       relations: { organization: true },
     });
 
@@ -85,6 +95,36 @@ export class TypeOrmUserRepository implements IUserRepository {
 
     if (!entity) {
       throw new Error(`User ${userId} not found after login_at update`);
+    }
+
+    return entity.toDomain();
+  }
+
+  async updateActive(userId: string, active: boolean): Promise<User> {
+    await this.usersRepository.update({ id: userId }, { active });
+
+    const entity = await this.usersRepository.findOne({
+      where: { id: userId },
+      relations: { organization: true },
+    });
+
+    if (!entity) {
+      throw new Error(`User ${userId} not found after active update`);
+    }
+
+    return entity.toDomain();
+  }
+
+  async updateProfile(userId: string, data: UpdateProfileData): Promise<User> {
+    await this.usersRepository.update({ id: userId }, data);
+
+    const entity = await this.usersRepository.findOne({
+      where: { id: userId },
+      relations: { organization: true },
+    });
+
+    if (!entity) {
+      throw new Error(`User ${userId} not found after profile update`);
     }
 
     return entity.toDomain();

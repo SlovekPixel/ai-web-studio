@@ -40,7 +40,7 @@ export default function DashboardPage() {
                 compact
               />
             ) : (
-              <OrganizationEmptyState canCreate={!me.data.orgId} />
+              <OrganizationEmptyState />
             )}
 
             <ProfileDetails user={me.data} compact />

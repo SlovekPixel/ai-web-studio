@@ -9,6 +9,8 @@
     "FORBIDDEN": "Access denied",
     "ORGANIZATION_NOT_FOUND": "Organization {organizationUuid} does not exist",
     "ORGANIZATION_NAME_TAKEN": "Organization name \"{name}\" is already taken",
-    "ORGANIZATION_INN_TAKEN": "Organization INN \"{inn}\" is already taken"
+    "ORGANIZATION_INN_TAKEN": "Organization INN \"{inn}\" is already taken",
+    "EMAIL_ALREADY_SET": "Email is already set and cannot be changed",
+    "EMAIL_ALREADY_TAKEN": "Email \"{email}\" is already taken"
   }
 }

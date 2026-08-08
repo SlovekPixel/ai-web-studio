@@ -9,6 +9,8 @@
     "FORBIDDEN": "Доступ запрещён",
     "ORGANIZATION_NOT_FOUND": "Организация {organizationUuid} не найдена",
     "ORGANIZATION_NAME_TAKEN": "Название организации \"{name}\" уже занято",
-    "ORGANIZATION_INN_TAKEN": "ИНН организации \"{inn}\" уже занят"
+    "ORGANIZATION_INN_TAKEN": "ИНН организации \"{inn}\" уже занят",
+    "EMAIL_ALREADY_SET": "Email уже установлен и не может быть изменён",
+    "EMAIL_ALREADY_TAKEN": "Email \"{email}\" уже занят"
   }
 }

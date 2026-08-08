@@ -25,6 +25,7 @@ export class User {
       fullName: this.fullName,
       active: this.active,
       orgId: this.orgId,
+      isAdmin: this.orgId === null,
       organization: this.organization ? this.organization.toPublic() : null,
       loginAt: this.loginAt ? this.loginAt.toISOString() : null,
       createdAt: this.createdAt.toISOString(),

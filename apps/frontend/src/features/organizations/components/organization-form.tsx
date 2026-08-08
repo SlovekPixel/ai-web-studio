@@ -4,10 +4,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   CreateOrganizationRequestSchema,
   type PublicOrganizationType,
+  type PublicUserType,
 } from "@repo/types";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 
@@ -23,7 +24,15 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { organizationsQueryKey } from "@/features/organizations/hooks/use-organizations";
 import { meQueryKey } from "@/features/users/hooks/use-me";
 import { authApi } from "@/features/auth/api";
 import { getErrorMessage } from "@/lib/api/errors";
@@ -40,6 +49,7 @@ const createFormSchema = z.object({
       "ИНН должен содержать 10 или 12 цифр",
     )
     .optional(),
+  ownerId: z.uuid("Выберите владельца организации"),
 });
 
 const updateFormSchema = z.object({
@@ -53,13 +63,19 @@ type UpdateFormValues = z.infer<typeof updateFormSchema>;
 type OrganizationFormProps =
   | {
       mode: "create";
-      ownerId: string;
+      ownerId?: string;
+      ownerCandidates?: PublicUserType[];
       organization?: undefined;
+      redirectTo?: string;
+      invalidateOrganizations?: boolean;
     }
   | {
       mode: "edit";
       ownerId?: undefined;
+      ownerCandidates?: undefined;
       organization: PublicOrganizationType;
+      redirectTo?: string;
+      invalidateOrganizations?: boolean;
     };
 
 export function OrganizationForm(props: OrganizationFormProps) {
@@ -72,6 +88,7 @@ export function OrganizationForm(props: OrganizationFormProps) {
       name: "",
       description: "",
       inn: "",
+      ownerId: props.mode === "create" ? (props.ownerId ?? "") : "",
     },
   });
 
@@ -84,6 +101,21 @@ export function OrganizationForm(props: OrganizationFormProps) {
   });
 
   if (props.mode === "create") {
+    const ownerCandidates = props.ownerCandidates;
+    const requireOwnerSelect = Boolean(ownerCandidates);
+
+    if (requireOwnerSelect && ownerCandidates!.length === 0) {
+      return (
+        <Alert>
+          <AlertTitle>Нет доступных владельцев</AlertTitle>
+          <AlertDescription>
+            Чтобы создать организацию, сначала зарегистрируйте пользователя без
+            организации — он станет её владельцем.
+          </AlertDescription>
+        </Alert>
+      );
+    }
+
     const onSubmit = createForm.handleSubmit(async (values) => {
       try {
         const organization = await organizationsApi.create({
@@ -92,12 +124,22 @@ export function OrganizationForm(props: OrganizationFormProps) {
             ? values.description.trim()
             : null,
           inn: values.inn?.trim() ? values.inn.trim() : null,
-          ownerId: props.ownerId,
+          ownerId: values.ownerId,
         });
-        await authApi.refresh();
-        await queryClient.invalidateQueries({ queryKey: meQueryKey });
+
+        if (props.invalidateOrganizations) {
+          await queryClient.invalidateQueries({
+            queryKey: organizationsQueryKey,
+          });
+        } else {
+          await authApi.refresh();
+          await queryClient.invalidateQueries({ queryKey: meQueryKey });
+        }
+
         toast.success("Организация создана");
-        router.replace(`/organizations/${organization.uuid}`);
+        router.replace(
+          props.redirectTo ?? `/organizations/${organization.uuid}`,
+        );
         router.refresh();
       } catch (error) {
         createForm.setError("root", {
@@ -111,7 +153,9 @@ export function OrganizationForm(props: OrganizationFormProps) {
         <CardHeader>
           <CardTitle>Новая организация</CardTitle>
           <CardDescription>
-            Заполните данные организации. Вы будете указаны как владелец.
+            {requireOwnerSelect
+              ? "Заполните данные организации и выберите владельца."
+              : "Заполните данные организации. Вы будете указаны как владелец."}
           </CardDescription>
         </CardHeader>
         <form onSubmit={onSubmit}>
@@ -138,7 +182,11 @@ export function OrganizationForm(props: OrganizationFormProps) {
               htmlFor="inn"
               error={createForm.formState.errors.inn?.message}
             >
-              <Input id="inn" inputMode="numeric" {...createForm.register("inn")} />
+              <Input
+                id="inn"
+                inputMode="numeric"
+                {...createForm.register("inn")}
+              />
             </Field>
 
             <Field
@@ -152,6 +200,38 @@ export function OrganizationForm(props: OrganizationFormProps) {
                 {...createForm.register("description")}
               />
             </Field>
+
+            {requireOwnerSelect ? (
+              <Field
+                label="Владелец"
+                htmlFor="ownerId"
+                error={createForm.formState.errors.ownerId?.message}
+              >
+                <Controller
+                  control={createForm.control}
+                  name="ownerId"
+                  render={({ field }) => (
+                    <Select
+                      value={field.value || null}
+                      onValueChange={(value) => field.onChange(value ?? "")}
+                    >
+                      <SelectTrigger id="ownerId" className="w-full">
+                        <SelectValue placeholder="Выберите пользователя" />
+                      </SelectTrigger>
+                      <SelectContent alignItemWithTrigger={false}>
+                        {ownerCandidates!.map((user) => (
+                          <SelectItem key={user.id} value={user.id}>
+                            {user.fullName} ({user.login})
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+              </Field>
+            ) : (
+              <input type="hidden" {...createForm.register("ownerId")} />
+            )}
           </CardContent>
           <CardFooter className="gap-2">
             <Button type="submit" disabled={createForm.formState.isSubmitting}>
@@ -182,7 +262,9 @@ export function OrganizationForm(props: OrganizationFormProps) {
         },
       );
       toast.success("Организация обновлена");
-      router.replace(`/organizations/${organization.uuid}`);
+      router.replace(
+        props.redirectTo ?? `/organizations/${organization.uuid}`,
+      );
       router.refresh();
     } catch (error) {
       editForm.setError("root", {

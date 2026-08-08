@@ -13,7 +13,7 @@ import { useMe } from "@/features/users/hooks/use-me";
 export default function EditOrganizationPage() {
   const params = useParams<{ uuid: string }>();
   const me = useMe();
-  const canEditAsAdmin = Boolean(me.data && me.data.orgId === null);
+  const canEditAsAdmin = Boolean(me.data?.isAdmin);
 
   const organizationQuery = useQuery({
     queryKey: ["organizations", params.uuid],
@@ -31,8 +31,7 @@ export default function EditOrganizationPage() {
           <Alert variant="destructive">
             <AlertTitle>Недостаточно прав</AlertTitle>
             <AlertDescription>
-              Редактирование организаций через API доступно только
-              пользователям без назначенной организации.
+              Редактирование организаций доступно только администраторам.
             </AlertDescription>
           </Alert>
         ) : (

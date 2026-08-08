@@ -55,7 +55,7 @@ export class AuthorizationGuard implements CanActivate {
       );
     }
 
-    if (user.orgId !== null) {
+    if (!user.isAdmin) {
       throw new ForbiddenException(i18nService.translate('ERRORS.FORBIDDEN'));
     }
 

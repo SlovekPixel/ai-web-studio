@@ -56,6 +56,7 @@ export const CreateOrganizationRequestSchema = z.object({
 export const UpdateOrganizationRequestSchema = PublicOrganizationSchema.pick({
   name: true,
   description: true,
+  active: true,
 }).partial();
 
 export const AddOrganizationUserRequestSchema = z.object({
