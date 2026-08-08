@@ -10,12 +10,15 @@
   "private": true,
   "scripts": {
     "build": "turbo run build",
-    "start": "turbo run start --filter=backend",
-    "start:dev": "turbo run start:dev --filter=backend",
+    "dev": "turbo run start:dev --filter=backend --filter=frontend",
+    "start": "turbo run start --filter=backend --filter=frontend",
+    "start:dev": "turbo run start:dev --filter=backend --filter=frontend",
     "lint": "turbo run lint",
     "test": "turbo run test",
     "dev:backend": "turbo run start:dev --filter=backend",
+    "dev:frontend": "turbo run start:dev --filter=frontend",
     "build:backend": "turbo run build --filter=backend",
+    "build:frontend": "turbo run build --filter=frontend",
     "prepare": "husky"
   },
   "devDependencies": {

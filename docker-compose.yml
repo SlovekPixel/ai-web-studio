@@ -76,6 +76,21 @@ services:
         condition: service_healthy
     restart: unless-stopped
 
+  frontend:
+    build:
+      context: .
+      target: frontend
+    environment:
+      NODE_ENV: ${NODE_ENV:-production}
+      PORT: 3001
+      HOSTNAME: 0.0.0.0
+      BACKEND_URL: http://backend:3000
+    ports:
+      - "${FRONTEND_PORT:-3001}:3001"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
 volumes:
   postgres_data:
   redis_data:
