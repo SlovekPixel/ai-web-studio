@@ -8,6 +8,20 @@ export interface DatabaseConfiguration {
   readonly database: string;
 }
 
+export interface RedisConfiguration {
+  readonly host: string;
+  readonly port: number;
+  readonly password?: string;
+  readonly db: number;
+}
+
+export interface JwtConfiguration {
+  readonly accessSecret: string;
+  readonly refreshSecret: string;
+  readonly accessTtlSeconds: number;
+  readonly refreshTtlSeconds: number;
+}
+
 export interface IConfigurationService {
   readonly hostname: string;
   readonly port: number;
@@ -15,6 +29,8 @@ export interface IConfigurationService {
   readonly isProduction: boolean;
   readonly enableSwagger: boolean;
   readonly database: DatabaseConfiguration;
+  readonly redis: RedisConfiguration;
+  readonly jwt: JwtConfiguration;
 }
 
 export const CONFIGURATION_SERVICE = Symbol('CONFIGURATION_SERVICE');

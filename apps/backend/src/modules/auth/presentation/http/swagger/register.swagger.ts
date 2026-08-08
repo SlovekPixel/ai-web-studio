@@ -7,18 +7,17 @@ import {
 } from '@nestjs/swagger';
 
 import { ExceptionResponseDto } from '~/filters/dto/exception-response.dto';
-import { UserResponseDto } from '~/modules/users/presentation/http/dto/user-response.dto';
 import { DefaultApiResponses } from '~/swagger/default-api-responses';
 
 export function RegisterSwagger(): MethodDecorator {
   return applyDecorators(
     ApiOperation({
       summary: 'Зарегистрировать пользователя',
-      description: 'Создаёт нового пользователя по логину, паролю и ФИО.',
+      description:
+        'Создаёт нового пользователя и выставляет httpOnly cookies access_token и refresh_token.',
     }),
     ApiCreatedResponse({
-      description: 'Пользователь успешно зарегистрирован',
-      type: UserResponseDto,
+      description: 'Пользователь успешно зарегистрирован, cookies установлены',
     }),
     ApiBadRequestResponse({
       description: 'Некорректные данные запроса',

@@ -18,5 +18,17 @@ export const SwaggerConfig = new DocumentBuilder()
     },
     'Accept-Language',
   )
+  .addCookieAuth('access_token', {
+    type: 'apiKey',
+    in: 'cookie',
+    name: 'access_token',
+    description: 'JWT access token httpOnly cookie',
+  })
+  .addCookieAuth('refresh_token', {
+    type: 'apiKey',
+    in: 'cookie',
+    name: 'refresh_token',
+    description: 'JWT refresh token httpOnly cookie',
+  })
   .addSecurityRequirements('Accept-Language')
   .build();

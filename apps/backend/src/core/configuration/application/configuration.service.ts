@@ -3,6 +3,8 @@ import { Inject, Injectable } from '@nestjs/common';
 import type {
   DatabaseConfiguration,
   IConfigurationService,
+  JwtConfiguration,
+  RedisConfiguration,
 } from '~/core/configuration/domain/ports/configuration.service.port';
 import type { ConfigurationType } from '~/core/configuration/domain/schemas/configuration.schema';
 
@@ -41,6 +43,24 @@ export class ConfigurationService implements IConfigurationService {
       username: this.config.POSTGRES_USER,
       password: this.config.POSTGRES_PASSWORD,
       database: this.config.POSTGRES_DB,
+    };
+  }
+
+  get redis(): RedisConfiguration {
+    return {
+      host: this.config.REDIS_HOST,
+      port: this.config.REDIS_PORT,
+      password: this.config.REDIS_PASSWORD,
+      db: this.config.REDIS_DB,
+    };
+  }
+
+  get jwt(): JwtConfiguration {
+    return {
+      accessSecret: this.config.JWT_ACCESS_SECRET,
+      refreshSecret: this.config.JWT_REFRESH_SECRET,
+      accessTtlSeconds: this.config.JWT_ACCESS_TTL_SECONDS,
+      refreshTtlSeconds: this.config.JWT_REFRESH_TTL_SECONDS,
     };
   }
 }

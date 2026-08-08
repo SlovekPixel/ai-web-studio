@@ -1,15 +1,15 @@
 import { ConflictException, Inject, Injectable } from '@nestjs/common';
 
-import type { PublicUserType } from '@repo/types';
-
 import {
   I18N_SERVICE,
   type II18nService,
 } from '~/core/i18n/domain/ports/i18n.service.port';
+import { IssueAuthSessionService } from '~/modules/auth/application/services/issue-auth-session.service';
 import {
   PASSWORD_HASHER,
   type IPasswordHasher,
 } from '~/modules/auth/domain/ports/password-hasher.port';
+import type { IssuedTokenPair } from '~/modules/auth/domain/ports/token-service.port';
 import {
   USER_REPOSITORY,
   type IUserRepository,
@@ -24,13 +24,14 @@ export class RegisterUseCase {
     private readonly passwordHasher: IPasswordHasher,
     @Inject(I18N_SERVICE)
     private readonly i18nService: II18nService,
+    private readonly issueAuthSessionService: IssueAuthSessionService,
   ) {}
 
   async execute(
     login: string,
     password: string,
     fullName: string,
-  ): Promise<PublicUserType> {
+  ): Promise<IssuedTokenPair> {
     const existing = await this.userRepository.findByLogin(login);
 
     if (existing) {
@@ -46,6 +47,6 @@ export class RegisterUseCase {
       fullName,
     });
 
-    return user.toPublic();
+    return this.issueAuthSessionService.execute(user.toPublic());
   }
 }

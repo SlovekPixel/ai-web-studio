@@ -14,6 +14,7 @@ import { I18nModule } from '~/core/i18n/i18n.module';
 import { AggregateByLocaleContextIdStrategy } from '~/core/i18n/infrastructure/aggregate-by-locale.strategy';
 import { LoggingModule } from '~/core/logging/logging.module';
 import { HttpLoggingInterceptor } from '~/core/logging/presentation/interceptors/http-logging.interceptor';
+import { RedisModule } from '~/core/redis/redis.module';
 import { AuthModule } from '~/modules/auth/auth.module';
 import { OrganizationsModule } from '~/modules/organizations/organizations.module';
 import { UsersModule } from '~/modules/users/users.module';
@@ -25,6 +26,7 @@ ContextIdFactory.apply(new AggregateByLocaleContextIdStrategy());
     ConfigurationModule,
     LoggingModule,
     DatabaseModule,
+    RedisModule,
     I18nModule,
 
     UsersModule,

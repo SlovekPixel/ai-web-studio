@@ -1,15 +1,15 @@
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 
-import type { PublicUserType } from '@repo/types';
-
 import {
   I18N_SERVICE,
   type II18nService,
 } from '~/core/i18n/domain/ports/i18n.service.port';
+import { IssueAuthSessionService } from '~/modules/auth/application/services/issue-auth-session.service';
 import {
   PASSWORD_HASHER,
   type IPasswordHasher,
 } from '~/modules/auth/domain/ports/password-hasher.port';
+import type { IssuedTokenPair } from '~/modules/auth/domain/ports/token-service.port';
 import {
   USER_REPOSITORY,
   type IUserRepository,
@@ -24,9 +24,10 @@ export class LoginUseCase {
     private readonly passwordHasher: IPasswordHasher,
     @Inject(I18N_SERVICE)
     private readonly i18nService: II18nService,
+    private readonly issueAuthSessionService: IssueAuthSessionService,
   ) {}
 
-  async execute(login: string, password: string): Promise<PublicUserType> {
+  async execute(login: string, password: string): Promise<IssuedTokenPair> {
     const user = await this.userRepository.findByLogin(login);
 
     if (!user) {
@@ -51,6 +52,6 @@ export class LoginUseCase {
       new Date(),
     );
 
-    return updated.toPublic();
+    return this.issueAuthSessionService.execute(updated.toPublic());
   }
 }

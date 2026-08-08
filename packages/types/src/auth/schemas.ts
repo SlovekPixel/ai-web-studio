@@ -1,9 +1,10 @@
 import { z } from 'zod';
 
 import {
+  PublicUserSchema,
   userFullNameSchema,
   userLoginSchema,
-} from "../user";
+} from '../user';
 
 export const passwordSchema = z
   .string()
@@ -20,4 +21,19 @@ export const RegisterRequestSchema = z.object({
   login: userLoginSchema,
   password: passwordSchema,
   fullName: userFullNameSchema,
+});
+
+export const AccessTokenPayloadSchema = z.object({
+  sub: z.uuid(),
+  jti: z.uuid(),
+  sid: z.uuid(),
+  typ: z.literal('access'),
+  user: PublicUserSchema,
+});
+
+export const RefreshTokenPayloadSchema = z.object({
+  sub: z.uuid(),
+  jti: z.uuid(),
+  sid: z.uuid(),
+  typ: z.literal('refresh'),
 });
