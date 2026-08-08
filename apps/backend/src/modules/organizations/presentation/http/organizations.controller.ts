@@ -9,7 +9,11 @@ import {
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
-import { OrganizationService } from '~/modules/organizations/application/organization.service';
+import { AddUserToOrganizationUseCase } from '~/modules/organizations/application/use-cases/add-user-to-organization.use-case';
+import { CreateOrganizationUseCase } from '~/modules/organizations/application/use-cases/create-organization.use-case';
+import { FindAllOrganizationsUseCase } from '~/modules/organizations/application/use-cases/find-all-organizations.use-case';
+import { FindOrganizationByUuidUseCase } from '~/modules/organizations/application/use-cases/find-organization-by-uuid.use-case';
+import { UpdateOrganizationUseCase } from '~/modules/organizations/application/use-cases/update-organization.use-case';
 import { AddOrganizationUserRequestDto } from '~/modules/organizations/presentation/http/dto/add-organization-user-request.dto';
 import { CreateOrganizationRequestDto } from '~/modules/organizations/presentation/http/dto/create-organization-request.dto';
 import { OrganizationResponseDto } from '~/modules/organizations/presentation/http/dto/organization-response.dto';
@@ -24,12 +28,18 @@ import { UserResponseDto } from '~/modules/users/presentation/http/dto/user-resp
 @ApiTags('organizations')
 @Controller('organizations')
 export class OrganizationsController {
-  constructor(private readonly organizationService: OrganizationService) {}
+  constructor(
+    private readonly findAllOrganizationsUseCase: FindAllOrganizationsUseCase,
+    private readonly findOrganizationByUuidUseCase: FindOrganizationByUuidUseCase,
+    private readonly createOrganizationUseCase: CreateOrganizationUseCase,
+    private readonly updateOrganizationUseCase: UpdateOrganizationUseCase,
+    private readonly addUserToOrganizationUseCase: AddUserToOrganizationUseCase,
+  ) {}
 
   @Get()
   @FindAllSwagger()
   findAll(): Promise<OrganizationResponseDto[]> {
-    return this.organizationService.findAll();
+    return this.findAllOrganizationsUseCase.execute();
   }
 
   @Get(':uuid')
@@ -37,7 +47,7 @@ export class OrganizationsController {
   findByUuid(
     @Param('uuid', new ParseUUIDPipe({ version: '4' })) uuid: string,
   ): Promise<OrganizationResponseDto> {
-    return this.organizationService.findByUuid(uuid);
+    return this.findOrganizationByUuidUseCase.execute(uuid);
   }
 
   @Post()
@@ -45,7 +55,7 @@ export class OrganizationsController {
   create(
     @Body() body: CreateOrganizationRequestDto,
   ): Promise<OrganizationResponseDto> {
-    return this.organizationService.create({
+    return this.createOrganizationUseCase.execute({
       name: body.name,
       description: body.description ?? null,
       inn: body.inn ?? null,
@@ -59,7 +69,7 @@ export class OrganizationsController {
     @Param('uuid', new ParseUUIDPipe({ version: '4' })) uuid: string,
     @Body() body: UpdateOrganizationRequestDto,
   ): Promise<OrganizationResponseDto> {
-    return this.organizationService.update(uuid, {
+    return this.updateOrganizationUseCase.execute(uuid, {
       ...(body.name !== undefined ? { name: body.name } : {}),
       ...(body.description !== undefined
         ? { description: body.description }
@@ -73,6 +83,6 @@ export class OrganizationsController {
     @Param('uuid', new ParseUUIDPipe({ version: '4' })) uuid: string,
     @Body() body: AddOrganizationUserRequestDto,
   ): Promise<UserResponseDto> {
-    return this.organizationService.addUser(uuid, body.userId);
+    return this.addUserToOrganizationUseCase.execute(uuid, body.userId);
   }
 }
