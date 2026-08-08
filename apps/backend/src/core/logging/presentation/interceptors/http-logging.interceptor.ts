@@ -5,7 +5,9 @@ import {
   type NestInterceptor,
 } from '@nestjs/common';
 import type { Request, Response } from 'express';
-import { type Observable, tap } from 'rxjs';
+import type { Observable } from 'rxjs';
+
+import type { PublicUserType } from '@repo/types';
 
 import { LoggerService } from '~/core/logging/application/logger.service';
 
@@ -19,38 +21,30 @@ export class HttpLoggingInterceptor implements NestInterceptor {
     }
 
     const request = context.switchToHttp().getRequest<Request>();
-    const { method } = request;
-    const route = this.resolveRoute(request);
+    const response = context.switchToHttp().getResponse<Response>();
+    const method = request.method;
+    const path = this.resolvePath(request);
     const startedAt = Date.now();
 
-    return next.handle().pipe(
-      tap({
-        next: () => {
-          this.logRequest(method, route, context, startedAt);
-        },
-        error: () => {
-          this.logRequest(method, route, context, startedAt);
-        },
-      }),
-    );
+    response.once('finish', () => {
+      const username = this.resolveUsername(request);
+      const durationMs = Date.now() - startedAt;
+
+      this.logger.log(
+        `${method} ${path} ${username} ${response.statusCode} ${durationMs}ms`,
+        HttpLoggingInterceptor.name,
+      );
+    });
+
+    return next.handle();
   }
 
-  private resolveRoute(request: Request): string {
+  private resolvePath(request: Request): string {
     return request.originalUrl.split('?')[0] ?? request.url;
   }
 
-  private logRequest(
-    method: string,
-    route: string,
-    context: ExecutionContext,
-    startedAt: number,
-  ): void {
-    const response = context.switchToHttp().getResponse<Response>();
-    const duration = Date.now() - startedAt;
-
-    this.logger.log(
-      `${method} ${route} ${response.statusCode} ${duration}ms`,
-      HttpLoggingInterceptor.name,
-    );
+  private resolveUsername(request: Request): string {
+    const user = request.user as PublicUserType | undefined;
+    return user?.login ?? 'unknown';
   }
 }
