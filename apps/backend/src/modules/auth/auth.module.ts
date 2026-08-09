@@ -5,6 +5,7 @@ import { PassportModule } from '@nestjs/passport';
 
 import { IssueAuthSessionService } from '~/modules/auth/application/services/issue-auth-session.service';
 import { SeedSystemAdminService } from '~/modules/auth/application/services/seed-system-admin.service';
+import { ChangePasswordUseCase } from '~/modules/auth/application/use-cases/change-password.use-case';
 import { LoginUseCase } from '~/modules/auth/application/use-cases/login.use-case';
 import { LogoutAllUseCase } from '~/modules/auth/application/use-cases/logout-all.use-case';
 import { LogoutUseCase } from '~/modules/auth/application/use-cases/logout.use-case';
@@ -39,6 +40,7 @@ import { UsersModule } from '~/modules/users/users.module';
     RefreshUseCase,
     LogoutUseCase,
     LogoutAllUseCase,
+    ChangePasswordUseCase,
     IssueAuthSessionService,
     SeedSystemAdminService,
     JwtStrategy,

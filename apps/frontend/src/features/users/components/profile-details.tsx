@@ -6,7 +6,7 @@ import {
   userFullNameSchema,
   type PublicUserType,
 } from "@repo/types";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { z } from "zod";
 
@@ -23,6 +23,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { ChangePasswordSheet } from "@/features/auth/components/change-password-sheet";
 import { useUpdateMe } from "@/features/users/hooks/use-update-me";
 import { getErrorMessage } from "@/lib/api/errors";
 import { formatBoolean, formatDateTime } from "@/lib/format";
@@ -48,6 +49,7 @@ type ProfileDetailsProps = {
 export function ProfileDetails({ user, compact = false }: ProfileDetailsProps) {
   const updateMe = useUpdateMe();
   const emailLocked = user.email !== null;
+  const [changePasswordOpen, setChangePasswordOpen] = useState(false);
 
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
@@ -94,97 +96,31 @@ export function ProfileDetails({ user, compact = false }: ProfileDetailsProps) {
       email.trim() !== (user.email ?? ""));
 
   return (
-    <Card>
-      <CardHeader>
-        <div className="flex flex-wrap items-start justify-between gap-3">
-          <div>
-            <CardTitle>Мой профиль</CardTitle>
-            <CardDescription>
-              {compact
-                ? "Данные текущего пользователя из API"
-                : "Можно изменить ФИО. Email задаётся один раз."}
-            </CardDescription>
+    <>
+      <Card>
+        <CardHeader>
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <CardTitle>Мой профиль</CardTitle>
+              <CardDescription>
+                {compact
+                  ? "Данные текущего пользователя из API"
+                  : "Можно изменить ФИО. Email задаётся один раз."}
+              </CardDescription>
+            </div>
+            <Badge variant={user.active ? "default" : "secondary"}>
+              {user.active ? "Активен" : "Неактивен"}
+            </Badge>
           </div>
-          <Badge variant={user.active ? "default" : "secondary"}>
-            {user.active ? "Активен" : "Неактивен"}
-          </Badge>
-        </div>
-      </CardHeader>
+        </CardHeader>
 
-      {compact ? (
-        <CardContent>
-          <dl>
-            <InfoRow label="ID" value={user.id} />
-            <InfoRow label="Логин" value={user.login} />
-            <InfoRow label="ФИО" value={user.fullName} />
-            <InfoRow label="Email" value={user.email ?? "—"} />
-            <InfoRow
-              label="Организация"
-              value={user.organization?.name ?? "Не назначена"}
-            />
-            <InfoRow
-              label="Последний вход"
-              value={formatDateTime(user.loginAt)}
-            />
-          </dl>
-        </CardContent>
-      ) : (
-        <form onSubmit={onSubmit}>
+        {compact ? (
           <CardContent>
-            {form.formState.errors.root?.message ? (
-              <Alert variant="destructive" className="mb-3">
-                <AlertTitle>Ошибка</AlertTitle>
-                <AlertDescription>
-                  {form.formState.errors.root.message}
-                </AlertDescription>
-              </Alert>
-            ) : null}
-
             <dl>
               <InfoRow label="ID" value={user.id} />
               <InfoRow label="Логин" value={user.login} />
-              <InfoRow
-                label="ФИО"
-                value={
-                  <div className="space-y-1">
-                    <Input id="fullName" {...form.register("fullName")} />
-                    {form.formState.errors.fullName?.message ? (
-                      <p className="text-sm text-destructive">
-                        {form.formState.errors.fullName.message}
-                      </p>
-                    ) : null}
-                  </div>
-                }
-              />
-              <InfoRow
-                label="Email"
-                value={
-                  <div className="space-y-1">
-                    <Input
-                      id="email"
-                      type="email"
-                      autoComplete="email"
-                      disabled={emailLocked}
-                      placeholder={
-                        emailLocked ? undefined : "Укажите email"
-                      }
-                      {...form.register("email")}
-                    />
-                    {form.formState.errors.email?.message ? (
-                      <p className="text-sm text-destructive">
-                        {form.formState.errors.email.message}
-                      </p>
-                    ) : (
-                      <p className="text-xs text-muted-foreground">
-                        {emailLocked
-                          ? "Email уже установлен и не может быть изменён."
-                          : "После сохранения email изменить будет нельзя."}
-                      </p>
-                    )}
-                  </div>
-                }
-              />
-              <InfoRow label="ID организации" value={user.orgId ?? "—"} />
+              <InfoRow label="ФИО" value={user.fullName} />
+              <InfoRow label="Email" value={user.email ?? "—"} />
               <InfoRow
                 label="Организация"
                 value={user.organization?.name ?? "Не назначена"}
@@ -193,36 +129,118 @@ export function ProfileDetails({ user, compact = false }: ProfileDetailsProps) {
                 label="Последний вход"
                 value={formatDateTime(user.loginAt)}
               />
-              <InfoRow
-                label="Создан"
-                value={formatDateTime(user.createdAt)}
-              />
-              <InfoRow
-                label="Обновлён"
-                value={formatDateTime(user.updatedAt)}
-              />
-              <InfoRow
-                label="Активен"
-                value={formatBoolean(user.active)}
-              />
             </dl>
           </CardContent>
-          <CardFooter>
-            <Button
-              type="submit"
-              disabled={
-                !hasChanges ||
-                form.formState.isSubmitting ||
-                updateMe.isPending
-              }
-            >
-              {form.formState.isSubmitting || updateMe.isPending
-                ? "Сохраняем..."
-                : "Сохранить"}
-            </Button>
-          </CardFooter>
-        </form>
-      )}
-    </Card>
+        ) : (
+          <form onSubmit={onSubmit}>
+            <CardContent>
+              {form.formState.errors.root?.message ? (
+                <Alert variant="destructive" className="mb-3">
+                  <AlertTitle>Ошибка</AlertTitle>
+                  <AlertDescription>
+                    {form.formState.errors.root.message}
+                  </AlertDescription>
+                </Alert>
+              ) : null}
+
+              <dl>
+                <InfoRow label="ID" value={user.id} />
+                <InfoRow label="Логин" value={user.login} />
+                <InfoRow
+                  label="ФИО"
+                  value={
+                    <div className="space-y-1">
+                      <Input id="fullName" {...form.register("fullName")} />
+                      {form.formState.errors.fullName?.message ? (
+                        <p className="text-sm text-destructive">
+                          {form.formState.errors.fullName.message}
+                        </p>
+                      ) : null}
+                    </div>
+                  }
+                />
+                <InfoRow
+                  label="Email"
+                  value={
+                    <div className="space-y-1">
+                      <Input
+                        id="email"
+                        type="email"
+                        autoComplete="email"
+                        disabled={emailLocked}
+                        placeholder={
+                          emailLocked ? undefined : "Укажите email"
+                        }
+                        {...form.register("email")}
+                      />
+                      {form.formState.errors.email?.message ? (
+                        <p className="text-sm text-destructive">
+                          {form.formState.errors.email.message}
+                        </p>
+                      ) : (
+                        <p className="text-xs text-muted-foreground">
+                          {emailLocked
+                            ? "Email уже установлен и не может быть изменён."
+                            : "После сохранения email изменить будет нельзя."}
+                        </p>
+                      )}
+                    </div>
+                  }
+                />
+                <InfoRow label="ID организации" value={user.orgId ?? "—"} />
+                <InfoRow
+                  label="Организация"
+                  value={user.organization?.name ?? "Не назначена"}
+                />
+                <InfoRow
+                  label="Последний вход"
+                  value={formatDateTime(user.loginAt)}
+                />
+                <InfoRow
+                  label="Создан"
+                  value={formatDateTime(user.createdAt)}
+                />
+                <InfoRow
+                  label="Обновлён"
+                  value={formatDateTime(user.updatedAt)}
+                />
+                <InfoRow
+                  label="Активен"
+                  value={formatBoolean(user.active)}
+                />
+              </dl>
+            </CardContent>
+            <CardFooter className="flex flex-wrap gap-2">
+              <Button
+                type="submit"
+                disabled={
+                  !hasChanges ||
+                  form.formState.isSubmitting ||
+                  updateMe.isPending
+                }
+              >
+                {form.formState.isSubmitting || updateMe.isPending
+                  ? "Сохраняем..."
+                  : "Сохранить"}
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setChangePasswordOpen(true)}
+              >
+                Сменить пароль
+              </Button>
+            </CardFooter>
+          </form>
+        )}
+      </Card>
+
+      {!compact ? (
+        <ChangePasswordSheet
+          open={changePasswordOpen}
+          onOpenChange={setChangePasswordOpen}
+        />
+      ) : null}
+    </>
   );
 }

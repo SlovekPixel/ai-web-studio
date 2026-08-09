@@ -3,6 +3,7 @@
     "USER_NOT_FOUND": "User {userId} does not exist",
     "LOGIN_ALREADY_TAKEN": "Login \"{login}\" is already taken",
     "INVALID_CREDENTIALS": "Invalid login or password",
+    "INVALID_CURRENT_PASSWORD": "Current password is incorrect",
     "INVALID_TOKEN": "Invalid or expired access token",
     "INVALID_REFRESH_TOKEN": "Invalid or expired refresh token",
     "UNAUTHORIZED": "Unauthorized",

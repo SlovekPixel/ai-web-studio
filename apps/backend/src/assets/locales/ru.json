@@ -3,6 +3,7 @@
     "USER_NOT_FOUND": "Пользователь {userId} не найден",
     "LOGIN_ALREADY_TAKEN": "Логин \"{login}\" уже занят",
     "INVALID_CREDENTIALS": "Неверный логин или пароль",
+    "INVALID_CURRENT_PASSWORD": "Неверный текущий пароль",
     "INVALID_TOKEN": "Недействительный или просроченный access-токен",
     "INVALID_REFRESH_TOKEN": "Недействительный или просроченный refresh-токен",
     "UNAUTHORIZED": "Требуется авторизация",

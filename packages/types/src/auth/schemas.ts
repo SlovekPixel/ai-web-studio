@@ -43,6 +43,30 @@ export const RegisterOrgUserRequestSchema = RegisterRequestSchema.extend({
   }),
 });
 
+export const ChangePasswordRequestSchema = z
+  .object({
+    currentPassword: passwordSchema.meta({
+      title: 'Current password',
+      example: 'oldPassword123',
+    }),
+    newPassword: passwordSchema.meta({
+      title: 'New password',
+      example: 'newPassword123',
+    }),
+    confirmPassword: passwordSchema.meta({
+      title: 'Confirm password',
+      example: 'newPassword123',
+    }),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: 'Passwords do not match',
+    path: ['confirmPassword'],
+  })
+  .refine((data) => data.newPassword !== data.currentPassword, {
+    message: 'New password must be different from the current password',
+    path: ['newPassword'],
+  });
+
 export const AccessTokenPayloadSchema = z.object({
   sub: z.uuid(),
   jti: z.uuid(),

@@ -133,4 +133,19 @@ export class TypeOrmUserRepository implements IUserRepository {
 
     return entity.toDomain();
   }
+
+  async updatePassword(userId: string, hashPassword: string): Promise<User> {
+    await this.usersRepository.update({ id: userId }, { hashPassword });
+
+    const entity = await this.usersRepository.findOne({
+      where: { id: userId },
+      relations: { organization: true },
+    });
+
+    if (!entity) {
+      throw new Error(`User ${userId} not found after password update`);
+    }
+
+    return entity.toDomain();
+  }
 }

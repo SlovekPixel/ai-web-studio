@@ -9,12 +9,14 @@ import {
   Res,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import type { PublicUserType } from '@repo/types';
 import type { Request, Response } from 'express';
 
 import {
   CONFIGURATION_SERVICE,
   type IConfigurationService,
 } from '~/core/configuration/domain/ports/configuration.service.port';
+import { ChangePasswordUseCase } from '~/modules/auth/application/use-cases/change-password.use-case';
 import { LoginUseCase } from '~/modules/auth/application/use-cases/login.use-case';
 import { LogoutAllUseCase } from '~/modules/auth/application/use-cases/logout-all.use-case';
 import { LogoutUseCase } from '~/modules/auth/application/use-cases/logout.use-case';
@@ -27,10 +29,14 @@ import {
   AuthCookies,
   REFRESH_TOKEN_COOKIE,
 } from '~/modules/auth/presentation/http/cookies/auth-cookies';
+import { ChangePasswordRequestDto } from '~/modules/auth/presentation/http/dto/change-password-request.dto';
 import { LoginRequestDto } from '~/modules/auth/presentation/http/dto/login-request.dto';
 import { RegisterOrgAdminRequestDto } from '~/modules/auth/presentation/http/dto/register-org-admin-request.dto';
 import { RegisterOrgUserRequestDto } from '~/modules/auth/presentation/http/dto/register-org-user-request.dto';
+import { CurrentUser } from '~/modules/auth/presentation/http/decorators/current-user.decorator';
 import { IsPublic } from '~/modules/auth/presentation/http/decorators/is-public.decorator';
+import { IsUser } from '~/modules/auth/presentation/http/decorators/is-user.decorator';
+import { ChangePasswordSwagger } from '~/modules/auth/presentation/http/swagger/change-password.swagger';
 import { LoginSwagger } from '~/modules/auth/presentation/http/swagger/login.swagger';
 import { LogoutAllSwagger } from '~/modules/auth/presentation/http/swagger/logout-all.swagger';
 import { LogoutSwagger } from '~/modules/auth/presentation/http/swagger/logout.swagger';
@@ -50,6 +56,7 @@ export class AuthController {
     private readonly refreshUseCase: RefreshUseCase,
     private readonly logoutUseCase: LogoutUseCase,
     private readonly logoutAllUseCase: LogoutAllUseCase,
+    private readonly changePasswordUseCase: ChangePasswordUseCase,
     @Inject(CONFIGURATION_SERVICE)
     config: IConfigurationService,
   ) {
@@ -134,6 +141,17 @@ export class AuthController {
       this.readCookie(request, REFRESH_TOKEN_COOKIE),
     );
     this.authCookies.clearAuthCookies(response);
+  }
+
+  @Post('change-password')
+  @IsUser()
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ChangePasswordSwagger()
+  changePassword(
+    @CurrentUser() user: PublicUserType,
+    @Body() body: ChangePasswordRequestDto,
+  ): Promise<void> {
+    return this.changePasswordUseCase.execute(user.id, body);
   }
 
   private setCookies(response: Response, tokens: IssuedTokenPair): void {

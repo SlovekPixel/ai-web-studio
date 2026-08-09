@@ -23,6 +23,7 @@ export interface IUserRepository {
   updateLoginAt(userId: string, loginAt: Date): Promise<User>;
   updateActive(userId: string, active: boolean): Promise<User>;
   updateProfile(userId: string, data: UpdateProfileData): Promise<User>;
+  updatePassword(userId: string, hashPassword: string): Promise<User>;
 }
 
 export const USER_REPOSITORY = Symbol('USER_REPOSITORY');

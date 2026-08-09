@@ -1,7 +1,9 @@
 import {
+  ChangePasswordRequestSchema,
   LoginRequestSchema,
   RegisterOrgAdminRequestSchema,
   RegisterOrgUserRequestSchema,
+  type ChangePasswordRequestType,
   type LoginRequestType,
   type RegisterOrgAdminRequestType,
   type RegisterOrgUserRequestType,
@@ -32,6 +34,13 @@ export const authApi = {
       body,
       bodySchema: RegisterOrgUserRequestSchema,
       skipRefresh: true,
+    });
+  },
+
+  changePassword(body: ChangePasswordRequestType) {
+    return api.post(apiRoutes.auth.changePassword, {
+      body,
+      bodySchema: ChangePasswordRequestSchema,
     });
   },
 

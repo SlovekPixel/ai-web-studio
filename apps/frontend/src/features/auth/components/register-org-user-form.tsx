@@ -1,7 +1,10 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { RegisterOrgUserRequestSchema } from "@repo/types";
+import {
+  RegisterOrgUserRequestSchema,
+  passwordSchema,
+} from "@repo/types";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -23,11 +26,17 @@ import { Input } from "@/components/ui/input";
 import { authApi } from "@/features/auth/api";
 import { getErrorMessage } from "@/lib/api/errors";
 
-const formSchema = z.object({
-  fullName: RegisterOrgUserRequestSchema.shape.fullName,
-  login: RegisterOrgUserRequestSchema.shape.login,
-  password: RegisterOrgUserRequestSchema.shape.password,
-});
+const formSchema = z
+  .object({
+    fullName: RegisterOrgUserRequestSchema.shape.fullName,
+    login: RegisterOrgUserRequestSchema.shape.login,
+    password: RegisterOrgUserRequestSchema.shape.password,
+    confirmPassword: passwordSchema,
+  })
+  .refine((values) => values.password === values.confirmPassword, {
+    message: "Пароли не совпадают",
+    path: ["confirmPassword"],
+  });
 
 type FormValues = z.infer<typeof formSchema>;
 
@@ -48,6 +57,7 @@ export function RegisterOrgUserForm({
       fullName: "",
       login: "",
       password: "",
+      confirmPassword: "",
     },
   });
 
@@ -130,6 +140,20 @@ export function RegisterOrgUserForm({
               autoComplete="new-password"
               aria-invalid={Boolean(form.formState.errors.password)}
               {...form.register("password")}
+            />
+          </Field>
+
+          <Field
+            label="Подтверждение пароля"
+            htmlFor="confirmPassword"
+            error={form.formState.errors.confirmPassword?.message}
+          >
+            <Input
+              id="confirmPassword"
+              type="password"
+              autoComplete="new-password"
+              aria-invalid={Boolean(form.formState.errors.confirmPassword)}
+              {...form.register("confirmPassword")}
             />
           </Field>
         </CardContent>

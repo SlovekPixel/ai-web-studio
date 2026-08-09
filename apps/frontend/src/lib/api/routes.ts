@@ -6,6 +6,7 @@ export const apiRoutes = {
     refresh: "/api/auth/refresh",
     logout: "/api/auth/logout",
     logoutAll: "/api/auth/logout-all",
+    changePassword: "/api/auth/change-password",
   },
   users: {
     me: "/api/users/me",

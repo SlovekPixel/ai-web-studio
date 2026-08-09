@@ -4,6 +4,7 @@ export * from './schemas';
 
 import {
   AccessTokenPayloadSchema,
+  ChangePasswordRequestSchema,
   LoginRequestSchema,
   RefreshTokenPayloadSchema,
   RegisterOrgAdminRequestSchema,
@@ -18,6 +19,9 @@ export type RegisterOrgAdminRequestType = z.infer<
 >;
 export type RegisterOrgUserRequestType = z.infer<
   typeof RegisterOrgUserRequestSchema
+>;
+export type ChangePasswordRequestType = z.infer<
+  typeof ChangePasswordRequestSchema
 >;
 export type AccessTokenPayloadType = z.infer<typeof AccessTokenPayloadSchema>;
 export type RefreshTokenPayloadType = z.infer<typeof RefreshTokenPayloadSchema>;

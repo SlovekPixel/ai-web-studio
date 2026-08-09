@@ -1,7 +1,10 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { RegisterOrgAdminRequestSchema } from "@repo/types";
+import {
+  RegisterOrgAdminRequestSchema,
+  passwordSchema,
+} from "@repo/types";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -24,20 +27,26 @@ import { Textarea } from "@/components/ui/textarea";
 import { authApi } from "@/features/auth/api";
 import { getErrorMessage } from "@/lib/api/errors";
 
-const formSchema = z.object({
-  fullName: RegisterOrgAdminRequestSchema.shape.fullName,
-  login: RegisterOrgAdminRequestSchema.shape.login,
-  password: RegisterOrgAdminRequestSchema.shape.password,
-  description: z.string().trim().max(5000).optional(),
-  inn: z
-    .string()
-    .trim()
-    .refine(
-      (value) => value === "" || /^\d{10}(\d{2})?$/.test(value),
-      "ИНН должен содержать 10 или 12 цифр",
-    )
-    .optional(),
-});
+const formSchema = z
+  .object({
+    fullName: RegisterOrgAdminRequestSchema.shape.fullName,
+    login: RegisterOrgAdminRequestSchema.shape.login,
+    password: RegisterOrgAdminRequestSchema.shape.password,
+    confirmPassword: passwordSchema,
+    description: z.string().trim().max(5000).optional(),
+    inn: z
+      .string()
+      .trim()
+      .refine(
+        (value) => value === "" || /^\d{10}(\d{2})?$/.test(value),
+        "ИНН должен содержать 10 или 12 цифр",
+      )
+      .optional(),
+  })
+  .refine((values) => values.password === values.confirmPassword, {
+    message: "Пароли не совпадают",
+    path: ["confirmPassword"],
+  });
 
 type FormValues = z.infer<typeof formSchema>;
 
@@ -58,6 +67,7 @@ export function RegisterOrgAdminForm({
       fullName: "",
       login: "",
       password: "",
+      confirmPassword: "",
       description: "",
       inn: "",
     },
@@ -146,6 +156,20 @@ export function RegisterOrgAdminForm({
               autoComplete="new-password"
               aria-invalid={Boolean(form.formState.errors.password)}
               {...form.register("password")}
+            />
+          </Field>
+
+          <Field
+            label="Подтверждение пароля"
+            htmlFor="confirmPassword"
+            error={form.formState.errors.confirmPassword?.message}
+          >
+            <Input
+              id="confirmPassword"
+              type="password"
+              autoComplete="new-password"
+              aria-invalid={Boolean(form.formState.errors.confirmPassword)}
+              {...form.register("confirmPassword")}
             />
           </Field>
 
