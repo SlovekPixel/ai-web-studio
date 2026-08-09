@@ -1,15 +1,17 @@
-import { Body, Controller, Get, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Put } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
 import type { PublicUserType } from '@repo/types';
 
 import { CurrentUser } from '~/modules/auth/presentation/http/decorators/current-user.decorator';
 import { IsUser } from '~/modules/auth/presentation/http/decorators/is-user.decorator';
-import { GetComfyUiIntegrationTokenUseCase } from '~/modules/integrations/application/use-cases/get-comfyui-integration-token.use-case';
+import { DeleteComfyUiIntegrationUseCase } from '~/modules/integrations/application/use-cases/delete-comfyui-integration.use-case';
+import { GetComfyUiIntegrationStatusUseCase } from '~/modules/integrations/application/use-cases/get-comfyui-integration-status.use-case';
 import { SaveComfyUiIntegrationTokenUseCase } from '~/modules/integrations/application/use-cases/save-comfyui-integration-token.use-case';
-import { ComfyUiIntegrationResponseDto } from '~/modules/integrations/presentation/http/dto/comfyui-integration-response.dto';
+import { ComfyUiIntegrationStatusResponseDto } from '~/modules/integrations/presentation/http/dto/comfyui-integration-status-response.dto';
 import { SaveComfyUiIntegrationTokenRequestDto } from '~/modules/integrations/presentation/http/dto/save-comfyui-integration-token-request.dto';
-import { GetTokenSwagger } from '~/modules/integrations/presentation/http/swagger/get-token.swagger';
+import { DeleteIntegrationSwagger } from '~/modules/integrations/presentation/http/swagger/delete-integration.swagger';
+import { GetStatusSwagger } from '~/modules/integrations/presentation/http/swagger/get-status.swagger';
 import { SaveTokenSwagger } from '~/modules/integrations/presentation/http/swagger/save-token.swagger';
 
 @ApiTags('integrations')
@@ -17,16 +19,17 @@ import { SaveTokenSwagger } from '~/modules/integrations/presentation/http/swagg
 @Controller('integrations/comfyui-integration')
 export class ComfyUiIntegrationController {
   constructor(
-    private readonly getComfyUiIntegrationTokenUseCase: GetComfyUiIntegrationTokenUseCase,
+    private readonly getComfyUiIntegrationStatusUseCase: GetComfyUiIntegrationStatusUseCase,
     private readonly saveComfyUiIntegrationTokenUseCase: SaveComfyUiIntegrationTokenUseCase,
+    private readonly deleteComfyUiIntegrationUseCase: DeleteComfyUiIntegrationUseCase,
   ) {}
 
   @Get()
-  @GetTokenSwagger()
-  getToken(
+  @GetStatusSwagger()
+  getStatus(
     @CurrentUser() user: PublicUserType,
-  ): Promise<ComfyUiIntegrationResponseDto> {
-    return this.getComfyUiIntegrationTokenUseCase.execute(user.orgId);
+  ): Promise<ComfyUiIntegrationStatusResponseDto> {
+    return this.getComfyUiIntegrationStatusUseCase.execute(user.orgId);
   }
 
   @Put()
@@ -34,10 +37,15 @@ export class ComfyUiIntegrationController {
   saveToken(
     @CurrentUser() user: PublicUserType,
     @Body() body: SaveComfyUiIntegrationTokenRequestDto,
-  ): Promise<ComfyUiIntegrationResponseDto> {
-    return this.saveComfyUiIntegrationTokenUseCase.execute(
-      user.orgId,
-      body.token,
-    );
+  ): Promise<ComfyUiIntegrationStatusResponseDto> {
+    return this.saveComfyUiIntegrationTokenUseCase.execute(user, body.token);
+  }
+
+  @Delete()
+  @DeleteIntegrationSwagger()
+  deleteIntegration(
+    @CurrentUser() user: PublicUserType,
+  ): Promise<ComfyUiIntegrationStatusResponseDto> {
+    return this.deleteComfyUiIntegrationUseCase.execute(user);
   }
 }

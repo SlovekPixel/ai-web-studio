@@ -2,6 +2,7 @@
 
 import {
   Building2,
+  Cable,
   LayoutDashboard,
   LogOut,
   Shield,
@@ -22,6 +23,12 @@ const NAV_ITEMS = [
     href: "/dashboard",
     label: "Главная",
     icon: LayoutDashboard,
+  },
+  {
+    href: "/integrations",
+    label: "Интеграции",
+    icon: Cable,
+    requiresOrg: true,
   },
   {
     href: "/organizations",
@@ -88,6 +95,7 @@ export function AppSidebar({ onNavigate, className }: AppSidebarProps) {
   const logout = useLogout();
   const me = useMe();
   const isAdmin = Boolean(me.data?.isAdmin);
+  const hasOrganization = Boolean(me.data?.orgId);
 
   return (
     <aside
@@ -106,7 +114,9 @@ export function AppSidebar({ onNavigate, className }: AppSidebarProps) {
       <Separator />
 
       <nav className="flex flex-1 flex-col gap-1 p-3">
-        {NAV_ITEMS.map((item) => {
+        {NAV_ITEMS.filter(
+          (item) => !("requiresOrg" in item && item.requiresOrg) || hasOrganization,
+        ).map((item) => {
           const active =
             pathname === item.href || pathname.startsWith(`${item.href}/`);
 

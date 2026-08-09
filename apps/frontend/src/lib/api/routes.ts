@@ -23,4 +23,7 @@ export const apiRoutes = {
     memberInviteByToken: (token: string) =>
       `/api/organizations/member-invites/${encodeURIComponent(token)}`,
   },
+  integrations: {
+    comfyui: "/api/integrations/comfyui-integration",
+  },
 } as const;

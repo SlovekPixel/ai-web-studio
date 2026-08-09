@@ -3,12 +3,12 @@ import { z } from 'zod';
 export * from './schemas';
 
 import {
-  PublicComfyUiIntegrationSchema,
+  ComfyUiIntegrationStatusSchema,
   SaveComfyUiIntegrationTokenRequestSchema,
 } from './schemas';
 
-export type PublicComfyUiIntegrationType = z.infer<
-  typeof PublicComfyUiIntegrationSchema
+export type ComfyUiIntegrationStatusType = z.infer<
+  typeof ComfyUiIntegrationStatusSchema
 >;
 export type SaveComfyUiIntegrationTokenRequestType = z.infer<
   typeof SaveComfyUiIntegrationTokenRequestSchema

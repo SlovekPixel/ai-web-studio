@@ -140,12 +140,20 @@ export const api = {
     return request<TBody, TResponse>(path, { ...options, method: "POST" });
   },
 
+  put<TBody, TResponse = void>(
+    path: string,
+    options?: Omit<ApiRequestOptions<TBody, TResponse>, "method">,
+  ) {
+    return request<TBody, TResponse>(path, { ...options, method: "PUT" });
+  },
+
   patch<TBody, TResponse = void>(
     path: string,
     options?: Omit<ApiRequestOptions<TBody, TResponse>, "method">,
   ) {
     return request<TBody, TResponse>(path, { ...options, method: "PATCH" });
   },
+
 
   delete<TResponse = void>(
     path: string,

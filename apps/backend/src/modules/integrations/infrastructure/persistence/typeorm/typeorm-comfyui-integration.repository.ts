@@ -41,4 +41,8 @@ export class TypeOrmComfyUiIntegrationRepository implements IComfyUiIntegrationR
     const saved = await this.comfyUiIntegrationRepository.save(entity);
     return saved.toDomain();
   }
+
+  async deleteByOrgId(orgId: string): Promise<void> {
+    await this.comfyUiIntegrationRepository.delete({ orgId });
+  }
 }

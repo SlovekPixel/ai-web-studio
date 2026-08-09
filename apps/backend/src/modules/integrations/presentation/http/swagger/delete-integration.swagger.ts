@@ -1,6 +1,5 @@
 import { applyDecorators } from '@nestjs/common';
 import {
-  ApiBadRequestResponse,
   ApiCookieAuth,
   ApiForbiddenResponse,
   ApiOkResponse,
@@ -11,21 +10,17 @@ import { ExceptionResponseDto } from '~/filters/dto/exception-response.dto';
 import { ComfyUiIntegrationStatusResponseDto } from '~/modules/integrations/presentation/http/dto/comfyui-integration-status-response.dto';
 import { DefaultApiResponses } from '~/swagger/default-api-responses';
 
-export function SaveTokenSwagger(): MethodDecorator {
+export function DeleteIntegrationSwagger(): MethodDecorator {
   return applyDecorators(
     ApiCookieAuth('access_token'),
     ApiOperation({
-      summary: 'Сохранить токен ComfyUI',
+      summary: 'Удалить интеграцию ComfyUI',
       description:
-        'Создаёт или обновляет токен ComfyUI. Доступно только владельцу организации. Токен в ответе не возвращается.',
+        'Удаляет токен ComfyUI организации. Доступно только владельцу. Идемпотентно, если интеграция уже отсутствует.',
     }),
     ApiOkResponse({
-      description: 'Токен ComfyUI успешно сохранён',
+      description: 'Интеграция ComfyUI удалена',
       type: ComfyUiIntegrationStatusResponseDto,
-    }),
-    ApiBadRequestResponse({
-      description: 'Некорректные данные запроса',
-      type: ExceptionResponseDto,
     }),
     ApiForbiddenResponse({
       description: 'Только владелец организации может управлять интеграцией',

@@ -1,11 +1,6 @@
-import {
-  BadRequestException,
-  Inject,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 
-import type { PublicComfyUiIntegrationType } from '@repo/types';
+import type { ComfyUiIntegrationStatusType } from '@repo/types';
 
 import {
   I18N_SERVICE,
@@ -17,7 +12,7 @@ import {
 } from '~/modules/integrations/domain/ports/comfyui-integration.repository.port';
 
 @Injectable()
-export class GetComfyUiIntegrationTokenUseCase {
+export class GetComfyUiIntegrationStatusUseCase {
   constructor(
     @Inject(COMFYUI_INTEGRATION_REPOSITORY)
     private readonly comfyUiIntegrationRepository: IComfyUiIntegrationRepository,
@@ -25,7 +20,7 @@ export class GetComfyUiIntegrationTokenUseCase {
     private readonly i18nService: II18nService,
   ) {}
 
-  async execute(orgId: string | null): Promise<PublicComfyUiIntegrationType> {
+  async execute(orgId: string | null): Promise<ComfyUiIntegrationStatusType> {
     if (!orgId) {
       throw new BadRequestException(
         this.i18nService.translate('ERRORS.USER_HAS_NO_ORGANIZATION'),
@@ -35,14 +30,6 @@ export class GetComfyUiIntegrationTokenUseCase {
     const comfyUiIntegration =
       await this.comfyUiIntegrationRepository.findByOrgId(orgId);
 
-    if (!comfyUiIntegration) {
-      throw new NotFoundException(
-        this.i18nService.translate(
-          'ERRORS.COMFYUI_INTEGRATION_TOKEN_NOT_FOUND',
-        ),
-      );
-    }
-
-    return comfyUiIntegration.toPublic();
+    return { connected: comfyUiIntegration !== null };
   }
 }

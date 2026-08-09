@@ -12,7 +12,7 @@ import {
 } from '~/modules/integrations/domain/ports/comfyui-integration.repository.port';
 
 @Injectable()
-export class SaveComfyUiIntegrationTokenUseCase {
+export class DeleteComfyUiIntegrationUseCase {
   constructor(
     @Inject(COMFYUI_INTEGRATION_REPOSITORY)
     private readonly comfyUiIntegrationRepository: IComfyUiIntegrationRepository,
@@ -22,7 +22,6 @@ export class SaveComfyUiIntegrationTokenUseCase {
 
   async execute(
     currentUser: PublicUserType,
-    token: string,
   ): Promise<ComfyUiIntegrationStatusType> {
     if (
       !currentUser.isOrgOwner ||
@@ -34,11 +33,8 @@ export class SaveComfyUiIntegrationTokenUseCase {
       );
     }
 
-    await this.comfyUiIntegrationRepository.save({
-      orgId: currentUser.orgId,
-      token,
-    });
+    await this.comfyUiIntegrationRepository.deleteByOrgId(currentUser.orgId);
 
-    return { connected: true };
+    return { connected: false };
   }
 }
