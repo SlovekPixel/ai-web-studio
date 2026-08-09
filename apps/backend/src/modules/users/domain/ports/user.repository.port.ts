@@ -13,6 +13,7 @@ export type UpdateProfileData = {
 };
 
 export interface IUserRepository {
+  count(): Promise<number>;
   findAll(): Promise<User[]>;
   findById(id: string): Promise<User | null>;
   findByLogin(login: string): Promise<User | null>;

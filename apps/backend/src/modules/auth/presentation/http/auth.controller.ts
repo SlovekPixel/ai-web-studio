@@ -19,7 +19,8 @@ import { LoginUseCase } from '~/modules/auth/application/use-cases/login.use-cas
 import { LogoutAllUseCase } from '~/modules/auth/application/use-cases/logout-all.use-case';
 import { LogoutUseCase } from '~/modules/auth/application/use-cases/logout.use-case';
 import { RefreshUseCase } from '~/modules/auth/application/use-cases/refresh.use-case';
-import { RegisterUseCase } from '~/modules/auth/application/use-cases/register.use-case';
+import { RegisterOrgAdminUseCase } from '~/modules/auth/application/use-cases/register-org-admin.use-case';
+import { RegisterOrgUserUseCase } from '~/modules/auth/application/use-cases/register-org-user.use-case';
 import type { IssuedTokenPair } from '~/modules/auth/domain/ports/token-service.port';
 import {
   ACCESS_TOKEN_COOKIE,
@@ -27,13 +28,15 @@ import {
   REFRESH_TOKEN_COOKIE,
 } from '~/modules/auth/presentation/http/cookies/auth-cookies';
 import { LoginRequestDto } from '~/modules/auth/presentation/http/dto/login-request.dto';
-import { RegisterRequestDto } from '~/modules/auth/presentation/http/dto/register-request.dto';
+import { RegisterOrgAdminRequestDto } from '~/modules/auth/presentation/http/dto/register-org-admin-request.dto';
+import { RegisterOrgUserRequestDto } from '~/modules/auth/presentation/http/dto/register-org-user-request.dto';
 import { IsPublic } from '~/modules/auth/presentation/http/decorators/is-public.decorator';
 import { LoginSwagger } from '~/modules/auth/presentation/http/swagger/login.swagger';
 import { LogoutAllSwagger } from '~/modules/auth/presentation/http/swagger/logout-all.swagger';
 import { LogoutSwagger } from '~/modules/auth/presentation/http/swagger/logout.swagger';
 import { RefreshSwagger } from '~/modules/auth/presentation/http/swagger/refresh.swagger';
-import { RegisterSwagger } from '~/modules/auth/presentation/http/swagger/register.swagger';
+import { RegisterOrgAdminSwagger } from '~/modules/auth/presentation/http/swagger/register-org-admin.swagger';
+import { RegisterOrgUserSwagger } from '~/modules/auth/presentation/http/swagger/register-org-user.swagger';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -41,7 +44,8 @@ export class AuthController {
   private readonly authCookies: AuthCookies;
 
   constructor(
-    private readonly registerUseCase: RegisterUseCase,
+    private readonly registerOrgAdminUseCase: RegisterOrgAdminUseCase,
+    private readonly registerOrgUserUseCase: RegisterOrgUserUseCase,
     private readonly loginUseCase: LoginUseCase,
     private readonly refreshUseCase: RefreshUseCase,
     private readonly logoutUseCase: LogoutUseCase,
@@ -52,19 +56,27 @@ export class AuthController {
     this.authCookies = new AuthCookies(config);
   }
 
-  @Post('register')
+  @Post('register/org-admin')
   @IsPublic()
   @HttpCode(HttpStatus.CREATED)
-  @RegisterSwagger()
-  async register(
-    @Body() body: RegisterRequestDto,
+  @RegisterOrgAdminSwagger()
+  async registerOrgAdmin(
+    @Body() body: RegisterOrgAdminRequestDto,
     @Res({ passthrough: true }) response: Response,
   ): Promise<void> {
-    const tokens = await this.registerUseCase.execute(
-      body.login,
-      body.password,
-      body.fullName,
-    );
+    const tokens = await this.registerOrgAdminUseCase.execute(body);
+    this.setCookies(response, tokens);
+  }
+
+  @Post('register/org-user')
+  @IsPublic()
+  @HttpCode(HttpStatus.CREATED)
+  @RegisterOrgUserSwagger()
+  async registerOrgUser(
+    @Body() body: RegisterOrgUserRequestDto,
+    @Res({ passthrough: true }) response: Response,
+  ): Promise<void> {
+    const tokens = await this.registerOrgUserUseCase.execute(body);
     this.setCookies(response, tokens);
   }
 

@@ -104,6 +104,9 @@ function UserDetailContent({ user, onOpenChange }: UserDetailContentProps) {
             {active ? "Активен" : "Неактивен"}
           </Badge>
           {user.isAdmin ? <Badge variant="outline">Админ</Badge> : null}
+          {user.isOrgOwner ? (
+            <Badge variant="outline">Владелец организации</Badge>
+          ) : null}
         </div>
 
         <dl>
@@ -112,6 +115,10 @@ function UserDetailContent({ user, onOpenChange }: UserDetailContentProps) {
           <InfoRow label="ФИО" value={user.fullName} />
           <InfoRow label="Email" value={user.email ?? "—"} />
           <InfoRow label="Админ" value={formatBoolean(user.isAdmin)} />
+          <InfoRow
+            label="Владелец организации"
+            value={formatBoolean(user.isOrgOwner)}
+          />
           <InfoRow
             label="Последний вход"
             value={formatDateTime(user.loginAt)}

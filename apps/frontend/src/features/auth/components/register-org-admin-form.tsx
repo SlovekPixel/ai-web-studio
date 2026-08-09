@@ -1,12 +1,12 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { RegisterRequestSchema } from "@repo/types";
+import { RegisterOrgAdminRequestSchema } from "@repo/types";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import type { z } from "zod";
+import { z } from "zod";
 
 import { Field } from "@/components/shared/field";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -20,26 +20,61 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { authApi } from "@/features/auth/api";
 import { getErrorMessage } from "@/lib/api/errors";
 
-type RegisterFormValues = z.infer<typeof RegisterRequestSchema>;
+const formSchema = z.object({
+  fullName: RegisterOrgAdminRequestSchema.shape.fullName,
+  login: RegisterOrgAdminRequestSchema.shape.login,
+  password: RegisterOrgAdminRequestSchema.shape.password,
+  description: z.string().trim().max(5000).optional(),
+  inn: z
+    .string()
+    .trim()
+    .refine(
+      (value) => value === "" || /^\d{10}(\d{2})?$/.test(value),
+      "ИНН должен содержать 10 или 12 цифр",
+    )
+    .optional(),
+});
 
-export function RegisterForm() {
+type FormValues = z.infer<typeof formSchema>;
+
+type RegisterOrgAdminFormProps = {
+  token: string;
+  organizationName: string;
+};
+
+export function RegisterOrgAdminForm({
+  token,
+  organizationName,
+}: RegisterOrgAdminFormProps) {
   const router = useRouter();
 
-  const form = useForm<RegisterFormValues>({
-    resolver: zodResolver(RegisterRequestSchema),
+  const form = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
+      fullName: "",
       login: "",
       password: "",
-      fullName: "",
+      description: "",
+      inn: "",
     },
   });
 
   const onSubmit = form.handleSubmit(async (values) => {
     try {
-      await authApi.register(values);
+      await authApi.registerOrgAdmin({
+        token,
+        fullName: values.fullName,
+        login: values.login,
+        password: values.password,
+        description: values.description?.trim()
+          ? values.description.trim()
+          : null,
+        inn: values.inn?.trim() ? values.inn.trim() : null,
+      });
       toast.success("Регистрация выполнена");
       router.replace("/dashboard");
       router.refresh();
@@ -53,9 +88,10 @@ export function RegisterForm() {
   return (
     <Card className="w-full max-w-md border-border/80 shadow-sm">
       <CardHeader>
-        <CardTitle>Регистрация</CardTitle>
+        <CardTitle>Регистрация владельца</CardTitle>
         <CardDescription>
-          Создайте аккаунт, чтобы управлять организацией и контентом
+          Вы присоединяетесь к организации{" "}
+          <span className="font-medium text-foreground">{organizationName}</span>
         </CardDescription>
       </CardHeader>
       <form onSubmit={onSubmit}>
@@ -68,6 +104,10 @@ export function RegisterForm() {
               </AlertDescription>
             </Alert>
           ) : null}
+
+          <Field label="Организация" htmlFor="organizationName">
+            <Input id="organizationName" value={organizationName} readOnly />
+          </Field>
 
           <Field
             label="ФИО"
@@ -108,6 +148,32 @@ export function RegisterForm() {
               {...form.register("password")}
             />
           </Field>
+
+          <Field
+            label="ИНН"
+            htmlFor="inn"
+            error={form.formState.errors.inn?.message}
+          >
+            <Input
+              id="inn"
+              inputMode="numeric"
+              aria-invalid={Boolean(form.formState.errors.inn)}
+              {...form.register("inn")}
+            />
+          </Field>
+
+          <Field
+            label="Описание организации"
+            htmlFor="description"
+            error={form.formState.errors.description?.message}
+          >
+            <Textarea
+              id="description"
+              rows={3}
+              aria-invalid={Boolean(form.formState.errors.description)}
+              {...form.register("description")}
+            />
+          </Field>
         </CardContent>
         <CardFooter className="flex flex-col gap-3">
           <Button
@@ -119,7 +185,10 @@ export function RegisterForm() {
           </Button>
           <p className="text-center text-sm text-muted-foreground">
             Уже есть аккаунт?{" "}
-            <Link href="/login" className="text-foreground underline-offset-4 hover:underline">
+            <Link
+              href="/login"
+              className="text-foreground underline-offset-4 hover:underline"
+            >
               Войти
             </Link>
           </p>

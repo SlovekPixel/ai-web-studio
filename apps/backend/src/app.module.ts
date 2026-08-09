@@ -16,6 +16,7 @@ import { LoggingModule } from '~/core/logging/logging.module';
 import { HttpLoggingInterceptor } from '~/core/logging/presentation/interceptors/http-logging.interceptor';
 import { RedisModule } from '~/core/redis/redis.module';
 import { AuthModule } from '~/modules/auth/auth.module';
+import { IntegrationsModule } from '~/modules/integrations/integrations.module';
 import { OrganizationsModule } from '~/modules/organizations/organizations.module';
 import { UsersModule } from '~/modules/users/users.module';
 
@@ -31,6 +32,7 @@ ContextIdFactory.apply(new AggregateByLocaleContextIdStrategy());
 
     UsersModule,
     OrganizationsModule,
+    IntegrationsModule,
     AuthModule,
   ],
   providers: [

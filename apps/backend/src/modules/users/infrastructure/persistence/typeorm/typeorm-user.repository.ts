@@ -18,6 +18,10 @@ export class TypeOrmUserRepository implements IUserRepository {
     private readonly usersRepository: Repository<UserOrmEntity>,
   ) {}
 
+  count(): Promise<number> {
+    return this.usersRepository.count();
+  }
+
   async findAll(): Promise<User[]> {
     const entities = await this.usersRepository.find({
       relations: { organization: true },

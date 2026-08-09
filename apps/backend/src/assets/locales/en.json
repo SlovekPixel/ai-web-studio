@@ -10,7 +10,10 @@
     "ORGANIZATION_NOT_FOUND": "Organization {organizationUuid} does not exist",
     "ORGANIZATION_NAME_TAKEN": "Organization name \"{name}\" is already taken",
     "ORGANIZATION_INN_TAKEN": "Organization INN \"{inn}\" is already taken",
+    "ORGANIZATION_INVITE_INVALID": "Invite link is invalid or has expired",
     "EMAIL_ALREADY_SET": "Email is already set and cannot be changed",
-    "EMAIL_ALREADY_TAKEN": "Email \"{email}\" is already taken"
+    "EMAIL_ALREADY_TAKEN": "Email \"{email}\" is already taken",
+    "USER_HAS_NO_ORGANIZATION": "User is not assigned to an organization",
+    "COMFYUI_INTEGRATION_TOKEN_NOT_FOUND": "ComfyUI token is not configured for this organization"
   }
 }

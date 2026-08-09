@@ -46,11 +46,31 @@ export const PublicOrganizationSchema = z.object({
     .meta({ title: 'Updated At', example: '2026-01-01T00:00:00.000Z' }),
 });
 
-export const CreateOrganizationRequestSchema = z.object({
+export const CreateOrganizationInviteRequestSchema = z.object({
   name: organizationNameSchema,
-  description: organizationDescriptionSchema.optional(),
-  inn: organizationInnSchema.optional(),
-  ownerId: organizationOwnerIdSchema,
+});
+
+export const OrganizationInviteResponseSchema = z.object({
+  token: z.string().min(1).meta({
+    title: 'Invite token',
+    example: 'dGhpcy1pcy1hLXNhbXBsZS10b2tlbg',
+  }),
+  expiresAt: z.iso.datetime().meta({
+    title: 'Expires At',
+    example: '2026-01-01T00:02:00.000Z',
+  }),
+  invitePath: z.string().min(1).meta({
+    title: 'Invite path',
+    example: '/auth/register/org-admin?token=dGhpcy1pcy1hLXNhbXBsZS10b2tlbg',
+  }),
+});
+
+export const OrganizationInvitePreviewSchema = z.object({
+  organizationName: organizationNameSchema,
+  expiresAt: z.iso.datetime().meta({
+    title: 'Expires At',
+    example: '2026-01-01T00:02:00.000Z',
+  }),
 });
 
 export const UpdateOrganizationRequestSchema = PublicOrganizationSchema.pick({
@@ -59,9 +79,13 @@ export const UpdateOrganizationRequestSchema = PublicOrganizationSchema.pick({
   active: true,
 }).partial();
 
-export const AddOrganizationUserRequestSchema = z.object({
-  userId: z.uuid().meta({
-    title: 'User ID',
-    example: uuidExample,
-  }),
-});
+export const OrganizationMemberInviteResponseSchema =
+  OrganizationInviteResponseSchema.extend({
+    invitePath: z.string().min(1).meta({
+      title: 'Invite path',
+      example: '/register/org-user?token=dGhpcy1pcy1hLXNhbXBsZS10b2tlbg',
+    }),
+  });
+
+export const OrganizationMemberInvitePreviewSchema =
+  OrganizationInvitePreviewSchema;

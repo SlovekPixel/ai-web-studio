@@ -1,8 +1,16 @@
 import {
-  CreateOrganizationRequestSchema,
+  CreateOrganizationInviteRequestSchema,
+  OrganizationInvitePreviewSchema,
+  OrganizationInviteResponseSchema,
+  OrganizationMemberInvitePreviewSchema,
+  OrganizationMemberInviteResponseSchema,
   PublicOrganizationSchema,
   UpdateOrganizationRequestSchema,
-  type CreateOrganizationRequestType,
+  type CreateOrganizationInviteRequestType,
+  type OrganizationInvitePreviewType,
+  type OrganizationInviteResponseType,
+  type OrganizationMemberInvitePreviewType,
+  type OrganizationMemberInviteResponseType,
   type PublicOrganizationType,
   type UpdateOrganizationRequestType,
 } from "@repo/types";
@@ -26,11 +34,33 @@ export const organizationsApi = {
     });
   },
 
-  create(body: CreateOrganizationRequestType): Promise<PublicOrganizationType> {
-    return api.post(apiRoutes.organizations.root, {
+  createInvite(
+    body: CreateOrganizationInviteRequestType,
+  ): Promise<OrganizationInviteResponseType> {
+    return api.post(apiRoutes.organizations.invites, {
       body,
-      bodySchema: CreateOrganizationRequestSchema,
-      responseSchema: PublicOrganizationSchema,
+      bodySchema: CreateOrganizationInviteRequestSchema,
+      responseSchema: OrganizationInviteResponseSchema,
+    });
+  },
+
+  getInvite(token: string): Promise<OrganizationInvitePreviewType> {
+    return api.get(apiRoutes.organizations.inviteByToken(token), {
+      responseSchema: OrganizationInvitePreviewSchema,
+      skipRefresh: true,
+    });
+  },
+
+  createMemberInvite(): Promise<OrganizationMemberInviteResponseType> {
+    return api.post(apiRoutes.organizations.memberInvites, {
+      responseSchema: OrganizationMemberInviteResponseSchema,
+    });
+  },
+
+  getMemberInvite(token: string): Promise<OrganizationMemberInvitePreviewType> {
+    return api.get(apiRoutes.organizations.memberInviteByToken(token), {
+      responseSchema: OrganizationMemberInvitePreviewSchema,
+      skipRefresh: true,
     });
   },
 

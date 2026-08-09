@@ -40,10 +40,7 @@ export default function EditOrganizationPage() {
             error={me.error ?? organizationQuery.error}
           >
             {organizationQuery.data ? (
-              <OrganizationForm
-                mode="edit"
-                organization={organizationQuery.data}
-              />
+              <OrganizationForm organization={organizationQuery.data} />
             ) : null}
           </QueryState>
         )}

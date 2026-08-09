@@ -1,8 +1,10 @@
 import {
   LoginRequestSchema,
-  RegisterRequestSchema,
+  RegisterOrgAdminRequestSchema,
+  RegisterOrgUserRequestSchema,
   type LoginRequestType,
-  type RegisterRequestType,
+  type RegisterOrgAdminRequestType,
+  type RegisterOrgUserRequestType,
 } from "@repo/types";
 
 import { api } from "@/lib/api/client";
@@ -17,10 +19,18 @@ export const authApi = {
     });
   },
 
-  register(body: RegisterRequestType) {
-    return api.post(apiRoutes.auth.register, {
+  registerOrgAdmin(body: RegisterOrgAdminRequestType) {
+    return api.post(apiRoutes.auth.registerOrgAdmin, {
       body,
-      bodySchema: RegisterRequestSchema,
+      bodySchema: RegisterOrgAdminRequestSchema,
+      skipRefresh: true,
+    });
+  },
+
+  registerOrgUser(body: RegisterOrgUserRequestType) {
+    return api.post(apiRoutes.auth.registerOrgUser, {
+      body,
+      bodySchema: RegisterOrgUserRequestSchema,
       skipRefresh: true,
     });
   },

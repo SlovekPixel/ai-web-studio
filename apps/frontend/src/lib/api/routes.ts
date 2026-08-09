@@ -1,7 +1,8 @@
 export const apiRoutes = {
   auth: {
     login: "/api/auth/login",
-    register: "/api/auth/register",
+    registerOrgAdmin: "/api/auth/register/org-admin",
+    registerOrgUser: "/api/auth/register/org-user",
     refresh: "/api/auth/refresh",
     logout: "/api/auth/logout",
     logoutAll: "/api/auth/logout-all",
@@ -14,5 +15,11 @@ export const apiRoutes = {
   organizations: {
     root: "/api/organizations",
     byUuid: (uuid: string) => `/api/organizations/${uuid}`,
+    invites: "/api/organizations/invites",
+    inviteByToken: (token: string) =>
+      `/api/organizations/invites/${encodeURIComponent(token)}`,
+    memberInvites: "/api/organizations/member-invites",
+    memberInviteByToken: (token: string) =>
+      `/api/organizations/member-invites/${encodeURIComponent(token)}`,
   },
 } as const;

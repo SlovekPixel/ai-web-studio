@@ -46,6 +46,10 @@ export class IoRedisClient
     return this.client.get(key);
   }
 
+  getdel(key: string): Promise<string | null> {
+    return this.client.getdel(key);
+  }
+
   async set(key: string, value: string, ttlSeconds?: number): Promise<void> {
     if (ttlSeconds !== undefined) {
       await this.client.set(key, value, 'EX', ttlSeconds);
@@ -61,6 +65,10 @@ export class IoRedisClient
     }
 
     return this.client.del(...keys);
+  }
+
+  ttl(key: string): Promise<number> {
+    return this.client.ttl(key);
   }
 
   sadd(key: string, ...members: string[]): Promise<number> {

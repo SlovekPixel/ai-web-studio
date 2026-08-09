@@ -1,14 +1,11 @@
-import type {
-  CreateOrganizationRequestType,
-  UpdateOrganizationRequestType,
-} from '@repo/types';
+import type { UpdateOrganizationRequestType } from '@repo/types';
 
 import type { Organization } from '~/modules/organizations/domain/entities/organization.entity';
 
-/** Normalized create payload after HTTP optional fields are resolved to null. */
+/** Normalized create payload after optional fields are resolved to null. */
 export type CreateOrganizationData = {
-  name: CreateOrganizationRequestType['name'];
-  ownerId: CreateOrganizationRequestType['ownerId'];
+  name: string;
+  ownerId: string;
   description: string | null;
   inn: string | null;
 };

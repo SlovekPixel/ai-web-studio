@@ -2,7 +2,6 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoginRequestSchema } from "@repo/types";
-import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -97,7 +96,7 @@ export function LoginForm() {
             />
           </Field>
         </CardContent>
-        <CardFooter className="flex flex-col gap-3">
+        <CardFooter>
           <Button
             type="submit"
             className="w-full"
@@ -105,12 +104,6 @@ export function LoginForm() {
           >
             {form.formState.isSubmitting ? "Входим..." : "Войти"}
           </Button>
-          <p className="text-center text-sm text-muted-foreground">
-            Нет аккаунта?{" "}
-            <Link href="/register" className="text-foreground underline-offset-4 hover:underline">
-              Зарегистрироваться
-            </Link>
-          </p>
         </CardFooter>
       </form>
     </Card>

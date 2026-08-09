@@ -3,24 +3,30 @@ import {
   ApiBadRequestResponse,
   ApiConflictResponse,
   ApiCreatedResponse,
+  ApiGoneResponse,
   ApiOperation,
 } from '@nestjs/swagger';
 
 import { ExceptionResponseDto } from '~/filters/dto/exception-response.dto';
 import { DefaultApiResponses } from '~/swagger/default-api-responses';
 
-export function RegisterSwagger(): MethodDecorator {
+export function RegisterOrgUserSwagger(): MethodDecorator {
   return applyDecorators(
     ApiOperation({
-      summary: 'Зарегистрировать пользователя',
+      summary: 'Зарегистрировать участника организации по приглашению',
       description:
-        'Создаёт нового пользователя и выставляет httpOnly cookies access_token и refresh_token.',
+        'Создаёт пользователя и привязывает его к организации по одноразовому member-invite токену, выставляет auth cookies.',
     }),
     ApiCreatedResponse({
-      description: 'Пользователь успешно зарегистрирован, cookies установлены',
+      description:
+        'Пользователь создан и привязан к организации, cookies установлены',
     }),
     ApiBadRequestResponse({
       description: 'Некорректные данные запроса',
+      type: ExceptionResponseDto,
+    }),
+    ApiGoneResponse({
+      description: 'Приглашение недействительно или истекло',
       type: ExceptionResponseDto,
     }),
     ApiConflictResponse({

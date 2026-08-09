@@ -10,7 +10,10 @@
     "ORGANIZATION_NOT_FOUND": "Организация {organizationUuid} не найдена",
     "ORGANIZATION_NAME_TAKEN": "Название организации \"{name}\" уже занято",
     "ORGANIZATION_INN_TAKEN": "ИНН организации \"{inn}\" уже занят",
+    "ORGANIZATION_INVITE_INVALID": "Ссылка приглашения недействительна или истекла",
     "EMAIL_ALREADY_SET": "Email уже установлен и не может быть изменён",
-    "EMAIL_ALREADY_TAKEN": "Email \"{email}\" уже занят"
+    "EMAIL_ALREADY_TAKEN": "Email \"{email}\" уже занят",
+    "USER_HAS_NO_ORGANIZATION": "Пользователь не привязан к организации",
+    "COMFYUI_INTEGRATION_TOKEN_NOT_FOUND": "Токен ComfyUI не настроен для этой организации"
   }
 }

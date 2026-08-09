@@ -35,6 +35,7 @@ export const PublicUserSchema = z.object({
     example: uuidExample,
   }),
   isAdmin: z.boolean().meta({ title: 'Is Admin', example: true }),
+  isOrgOwner: z.boolean().meta({ title: 'Is Org Owner', example: false }),
   organization: PublicOrganizationSchema.nullable().meta({
     title: 'Organization',
   }),
