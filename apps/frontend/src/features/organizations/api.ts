@@ -5,6 +5,7 @@ import {
   OrganizationMemberInvitePreviewSchema,
   OrganizationMemberInviteResponseSchema,
   PublicOrganizationSchema,
+  PublicUserSchema,
   UpdateOrganizationRequestSchema,
   type CreateOrganizationInviteRequestType,
   type OrganizationInvitePreviewType,
@@ -12,6 +13,7 @@ import {
   type OrganizationMemberInvitePreviewType,
   type OrganizationMemberInviteResponseType,
   type PublicOrganizationType,
+  type PublicUserType,
   type UpdateOrganizationRequestType,
 } from "@repo/types";
 import { z } from "zod";
@@ -20,6 +22,7 @@ import { api } from "@/lib/api/client";
 import { apiRoutes } from "@/lib/api/routes";
 
 const PublicOrganizationListSchema = z.array(PublicOrganizationSchema);
+const PublicUserListSchema = z.array(PublicUserSchema);
 
 export const organizationsApi = {
   list(): Promise<PublicOrganizationType[]> {
@@ -31,6 +34,12 @@ export const organizationsApi = {
   getByUuid(uuid: string): Promise<PublicOrganizationType> {
     return api.get(apiRoutes.organizations.byUuid(uuid), {
       responseSchema: PublicOrganizationSchema,
+    });
+  },
+
+  listMembers(): Promise<PublicUserType[]> {
+    return api.get(apiRoutes.organizations.members, {
+      responseSchema: PublicUserListSchema,
     });
   },
 

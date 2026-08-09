@@ -6,6 +6,7 @@ import { CreateOrganizationMemberInviteUseCase } from '~/modules/organizations/a
 import { CreateOrganizationUseCase } from '~/modules/organizations/application/use-cases/create-organization.use-case';
 import { FindAllOrganizationsUseCase } from '~/modules/organizations/application/use-cases/find-all-organizations.use-case';
 import { FindOrganizationByUuidUseCase } from '~/modules/organizations/application/use-cases/find-organization-by-uuid.use-case';
+import { FindOrganizationMembersUseCase } from '~/modules/organizations/application/use-cases/find-organization-members.use-case';
 import { GetOrganizationInviteUseCase } from '~/modules/organizations/application/use-cases/get-organization-invite.use-case';
 import { GetOrganizationMemberInviteUseCase } from '~/modules/organizations/application/use-cases/get-organization-member-invite.use-case';
 import { UpdateOrganizationUseCase } from '~/modules/organizations/application/use-cases/update-organization.use-case';
@@ -22,7 +23,7 @@ import { UsersModule } from '~/modules/users/users.module';
 
 @Module({
   imports: [TypeOrmModule.forFeature([OrganizationOrmEntity]), UsersModule],
-  controllers: [OrganizationsController, OrganizationMemberInvitesController],
+  controllers: [OrganizationMemberInvitesController, OrganizationsController],
   providers: [
     FindAllOrganizationsUseCase,
     FindOrganizationByUuidUseCase,
@@ -30,6 +31,7 @@ import { UsersModule } from '~/modules/users/users.module';
     GetOrganizationInviteUseCase,
     CreateOrganizationMemberInviteUseCase,
     GetOrganizationMemberInviteUseCase,
+    FindOrganizationMembersUseCase,
     CreateOrganizationUseCase,
     UpdateOrganizationUseCase,
     {

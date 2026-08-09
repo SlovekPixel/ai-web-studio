@@ -31,6 +31,16 @@ export class TypeOrmUserRepository implements IUserRepository {
     return entities.map((entity) => entity.toDomain());
   }
 
+  async findByOrgId(orgId: string): Promise<User[]> {
+    const entities = await this.usersRepository.find({
+      where: { organization: { uuid: orgId } },
+      relations: { organization: true },
+      order: { createdAt: 'ASC' },
+    });
+
+    return entities.map((entity) => entity.toDomain());
+  }
+
   async findById(id: string): Promise<User | null> {
     const entity = await this.usersRepository.findOne({
       where: { id },

@@ -16,6 +16,7 @@ export const apiRoutes = {
   organizations: {
     root: "/api/organizations",
     byUuid: (uuid: string) => `/api/organizations/${uuid}`,
+    members: "/api/organizations/me/members",
     invites: "/api/organizations/invites",
     inviteByToken: (token: string) =>
       `/api/organizations/invites/${encodeURIComponent(token)}`,
