@@ -2,12 +2,11 @@
 
 import {
   Building2,
-  Cable,
-  LayoutDashboard,
   LogOut,
   Shield,
   Users,
   UserRound,
+  Workflow,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -20,15 +19,9 @@ import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
   {
-    href: "/dashboard",
-    label: "Главная",
-    icon: LayoutDashboard,
-  },
-  {
-    href: "/integrations",
-    label: "Интеграции",
-    icon: Cable,
-    requiresOrg: true,
+    href: "/profile",
+    label: "Мой профиль",
+    icon: UserRound,
   },
   {
     href: "/organizations",
@@ -36,9 +29,10 @@ const NAV_ITEMS = [
     icon: Building2,
   },
   {
-    href: "/profile",
-    label: "Мой профиль",
-    icon: UserRound,
+    href: "/comfyui",
+    label: "ComfyUI",
+    icon: Workflow,
+    requiresOrg: true,
   },
 ] as const;
 

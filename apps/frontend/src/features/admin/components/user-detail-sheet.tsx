@@ -34,7 +34,7 @@ export function UserDetailSheet({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
         side="right"
-        className="w-full gap-0 sm:max-w-lg"
+        className="gap-0 sm:w-1/4 sm:max-w-none"
         showCloseButton
       >
         {user ? (

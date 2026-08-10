@@ -21,21 +21,25 @@ export default function OrganizationsPage() {
       title="Моя организация"
       description="Данные организации текущего пользователя"
     >
-      <div className="mx-auto flex w-full max-w-6xl flex-col gap-6">
+      <div className="w-full">
         <QueryState isLoading={me.isLoading} error={me.error}>
           {me.data?.organization ? (
-            <>
-              {canInviteMembers ? <CreateMemberInviteCard /> : null}
-              <OrganizationDetails
-                organization={me.data.organization}
-                showEdit={canEditAsAdmin}
-              />
-              <QueryState isLoading={members.isLoading} error={members.error}>
-                {members.data ? (
-                  <OrganizationMembersTable members={members.data} />
-                ) : null}
-              </QueryState>
-            </>
+            <div className="grid w-full gap-6 lg:grid-cols-2 lg:items-start">
+              <div className="flex min-w-0 flex-col gap-6">
+                {canInviteMembers ? <CreateMemberInviteCard /> : null}
+                <OrganizationDetails
+                  organization={me.data.organization}
+                  showEdit={canEditAsAdmin}
+                />
+              </div>
+              <div className="min-w-0">
+                <QueryState isLoading={members.isLoading} error={members.error}>
+                  {members.data ? (
+                    <OrganizationMembersTable members={members.data} />
+                  ) : null}
+                </QueryState>
+              </div>
+            </div>
           ) : me.data ? (
             <OrganizationEmptyState />
           ) : null}

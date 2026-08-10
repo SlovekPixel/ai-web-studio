@@ -1,33 +1,5 @@
-"use client";
+import { redirect } from "next/navigation";
 
-import { AppShell } from "@/components/layout/app-shell";
-import { QueryState } from "@/components/shared/query-state";
-import { ComfyUiIntegrationCard } from "@/features/integrations/components/comfyui-integration-card";
-import { useMe } from "@/features/users/hooks/use-me";
-
-export default function IntegrationsPage() {
-  const me = useMe();
-  const hasOrganization = Boolean(me.data?.orgId);
-  const isOrgOwner = Boolean(me.data?.isOrgOwner);
-
-  return (
-    <AppShell
-      title="Интеграции"
-      description="Подключения организации к внешним сервисам"
-    >
-      <div className="mx-auto flex w-full max-w-4xl flex-col gap-6">
-        <QueryState isLoading={me.isLoading} error={me.error}>
-          {me.data ? (
-            hasOrganization ? (
-              <ComfyUiIntegrationCard isOrgOwner={isOrgOwner} />
-            ) : (
-              <p className="text-sm text-muted-foreground">
-                Интеграции доступны только пользователям организации.
-              </p>
-            )
-          ) : null}
-        </QueryState>
-      </div>
-    </AppShell>
-  );
+export default function IntegrationsRedirectPage() {
+  redirect("/comfyui");
 }

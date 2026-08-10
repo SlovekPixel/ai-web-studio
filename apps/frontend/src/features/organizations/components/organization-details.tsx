@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -31,7 +30,6 @@ export function OrganizationDetails({
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
             <CardTitle>Моя организация</CardTitle>
-            <CardDescription>Данные организации из API</CardDescription>
           </div>
           <Badge variant={organization.active ? "default" : "secondary"}>
             {organization.active ? "Активна" : "Неактивна"}

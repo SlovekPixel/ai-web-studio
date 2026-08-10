@@ -101,12 +101,12 @@ export function ProfileDetails({ user, compact = false }: ProfileDetailsProps) {
         <CardHeader>
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
-              <CardTitle>Мой профиль</CardTitle>
-              <CardDescription>
-                {compact
-                  ? "Данные текущего пользователя из API"
-                  : "Можно изменить ФИО. Email задаётся один раз."}
-              </CardDescription>
+              <CardTitle className="text-xl md:text-2xl">Мой профиль</CardTitle>
+              {compact ? (
+                <CardDescription>
+                  Данные текущего пользователя из API
+                </CardDescription>
+              ) : null}
             </div>
             <Badge variant={user.active ? "default" : "secondary"}>
               {user.active ? "Активен" : "Неактивен"}
@@ -177,13 +177,11 @@ export function ProfileDetails({ user, compact = false }: ProfileDetailsProps) {
                         <p className="text-sm text-destructive">
                           {form.formState.errors.email.message}
                         </p>
-                      ) : (
+                      ) : !emailLocked ? (
                         <p className="text-xs text-muted-foreground">
-                          {emailLocked
-                            ? "Email уже установлен и не может быть изменён."
-                            : "После сохранения email изменить будет нельзя."}
+                          После сохранения email изменить будет нельзя.
                         </p>
-                      )}
+                      ) : null}
                     </div>
                   }
                 />

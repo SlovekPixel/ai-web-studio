@@ -86,6 +86,7 @@ export function LoginForm() {
             label="Пароль"
             htmlFor="password"
             error={form.formState.errors.password?.message}
+            className="mb-4"
           >
             <Input
               id="password"
