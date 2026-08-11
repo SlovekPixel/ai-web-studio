@@ -30,7 +30,8 @@ export function RegisterOrgUserSwagger(): MethodDecorator {
       type: ExceptionResponseDto,
     }),
     ApiConflictResponse({
-      description: 'Пользователь с таким логином уже существует',
+      description:
+        'Пользователь с таким логином уже существует или достигнут лимит участников организации',
       type: ExceptionResponseDto,
     }),
     DefaultApiResponses(),

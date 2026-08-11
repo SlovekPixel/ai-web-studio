@@ -5,6 +5,12 @@
 **/.turbo
 **/coverage
 **/*.tsbuildinfo
+**/.next
+
+# Local turbo prune output (never copy into the build context)
+out
+**/out
+.docker-prune-*
 
 # Local env files: never bake secrets into the frontend bundle.
 # Runtime configuration comes from Docker Compose.
@@ -17,3 +23,4 @@
 **/*.md
 **/*.spec.ts
 **/test
+.github

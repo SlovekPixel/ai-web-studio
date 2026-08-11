@@ -4,6 +4,7 @@ import {
   HttpCode,
   HttpStatus,
   Param,
+  ParseUUIDPipe,
   Post,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
@@ -13,11 +14,13 @@ import type { PublicUserType } from '@repo/types';
 import { CurrentUser } from '~/modules/auth/presentation/http/decorators/current-user.decorator';
 import { IsPublic } from '~/modules/auth/presentation/http/decorators/is-public.decorator';
 import { CreateOrganizationMemberInviteUseCase } from '~/modules/organizations/application/use-cases/create-organization-member-invite.use-case';
+import { DeactivateOrganizationMemberUseCase } from '~/modules/organizations/application/use-cases/deactivate-organization-member.use-case';
 import { FindOrganizationMembersUseCase } from '~/modules/organizations/application/use-cases/find-organization-members.use-case';
 import { GetOrganizationMemberInviteUseCase } from '~/modules/organizations/application/use-cases/get-organization-member-invite.use-case';
 import { OrganizationMemberInvitePreviewDto } from '~/modules/organizations/presentation/http/dto/organization-member-invite-preview.dto';
 import { OrganizationMemberInviteResponseDto } from '~/modules/organizations/presentation/http/dto/organization-member-invite-response.dto';
 import { CreateMemberInviteSwagger } from '~/modules/organizations/presentation/http/swagger/create-member-invite.swagger';
+import { DeactivateMemberSwagger } from '~/modules/organizations/presentation/http/swagger/deactivate-member.swagger';
 import { FindMembersSwagger } from '~/modules/organizations/presentation/http/swagger/find-members.swagger';
 import { GetMemberInviteSwagger } from '~/modules/organizations/presentation/http/swagger/get-member-invite.swagger';
 import { UserResponseDto } from '~/modules/users/presentation/http/dto/user-response.dto';
@@ -29,12 +32,23 @@ export class OrganizationMemberInvitesController {
     private readonly createOrganizationMemberInviteUseCase: CreateOrganizationMemberInviteUseCase,
     private readonly getOrganizationMemberInviteUseCase: GetOrganizationMemberInviteUseCase,
     private readonly findOrganizationMembersUseCase: FindOrganizationMembersUseCase,
+    private readonly deactivateOrganizationMemberUseCase: DeactivateOrganizationMemberUseCase,
   ) {}
 
   @Get('me/members')
   @FindMembersSwagger()
   findMembers(@CurrentUser() user: PublicUserType): Promise<UserResponseDto[]> {
     return this.findOrganizationMembersUseCase.execute(user);
+  }
+
+  @Post('me/members/:userId/deactivate')
+  @HttpCode(HttpStatus.OK)
+  @DeactivateMemberSwagger()
+  deactivateMember(
+    @CurrentUser() user: PublicUserType,
+    @Param('userId', new ParseUUIDPipe({ version: '4' })) userId: string,
+  ): Promise<UserResponseDto> {
+    return this.deactivateOrganizationMemberUseCase.execute(user, userId);
   }
 
   @Post('member-invites')

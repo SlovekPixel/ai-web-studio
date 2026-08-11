@@ -45,6 +45,14 @@ export function OrganizationDetails({
             value={organization.description?.trim() || "—"}
           />
           <InfoRow label="ИНН" value={organization.inn ?? "—"} />
+          <InfoRow
+            label="Участники (активные)"
+            value={`${organization.currentMembersActive} / ${organization.maxMembers}`}
+          />
+          <InfoRow
+            label="Участники (всего)"
+            value={String(organization.currentMembersAll)}
+          />
           {!compact ? (
             <>
               <InfoRow label="ID владельца" value={organization.ownerId} />

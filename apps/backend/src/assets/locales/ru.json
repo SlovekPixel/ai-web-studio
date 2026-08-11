@@ -12,6 +12,7 @@
     "ORGANIZATION_NAME_TAKEN": "Название организации \"{name}\" уже занято",
     "ORGANIZATION_INN_TAKEN": "ИНН организации \"{inn}\" уже занят",
     "ORGANIZATION_INVITE_INVALID": "Ссылка приглашения недействительна или истекла",
+    "ORGANIZATION_MEMBER_LIMIT_REACHED": "Достигнут лимит участников организации",
     "EMAIL_ALREADY_SET": "Email уже установлен и не может быть изменён",
     "EMAIL_ALREADY_TAKEN": "Email \"{email}\" уже занят",
     "USER_HAS_NO_ORGANIZATION": "Пользователь не привязан к организации",

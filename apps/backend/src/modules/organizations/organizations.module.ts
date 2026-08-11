@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { CreateOrganizationInviteUseCase } from '~/modules/organizations/application/use-cases/create-organization-invite.use-case';
 import { CreateOrganizationMemberInviteUseCase } from '~/modules/organizations/application/use-cases/create-organization-member-invite.use-case';
 import { CreateOrganizationUseCase } from '~/modules/organizations/application/use-cases/create-organization.use-case';
+import { DeactivateOrganizationMemberUseCase } from '~/modules/organizations/application/use-cases/deactivate-organization-member.use-case';
 import { FindAllOrganizationsUseCase } from '~/modules/organizations/application/use-cases/find-all-organizations.use-case';
 import { FindOrganizationByUuidUseCase } from '~/modules/organizations/application/use-cases/find-organization-by-uuid.use-case';
 import { FindOrganizationMembersUseCase } from '~/modules/organizations/application/use-cases/find-organization-members.use-case';
@@ -32,6 +33,7 @@ import { UsersModule } from '~/modules/users/users.module';
     CreateOrganizationMemberInviteUseCase,
     GetOrganizationMemberInviteUseCase,
     FindOrganizationMembersUseCase,
+    DeactivateOrganizationMemberUseCase,
     CreateOrganizationUseCase,
     UpdateOrganizationUseCase,
     {

@@ -40,3 +40,14 @@ pnpm dev:frontend
 
 - Frontend: `http://localhost:3001`
 - Нужен backend и `BACKEND_URL` в корневом `.env`
+
+## Docker
+
+Полный стек из корня репозитория:
+
+```bash
+cp .env.example .env
+docker compose up --build
+```
+
+Frontend-образ: `apps/frontend/Dockerfile` (`turbo prune` + Next standalone). В Compose задайте `BACKEND_URL` (по умолчанию `http://backend:3000`).

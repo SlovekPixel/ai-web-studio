@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -9,12 +9,21 @@ import type {
   UpdateOrganizationData,
 } from '~/modules/organizations/domain/ports/organization.repository.port';
 import { OrganizationOrmEntity } from '~/modules/organizations/infrastructure/persistence/typeorm/organization.orm-entity';
+import {
+  USER_REPOSITORY,
+  type IUserRepository,
+  type OrganizationMemberCounts,
+} from '~/modules/users/domain/ports/user.repository.port';
+
+const EMPTY_COUNTS: OrganizationMemberCounts = { all: 0, active: 0 };
 
 @Injectable()
 export class TypeOrmOrganizationRepository implements IOrganizationRepository {
   constructor(
     @InjectRepository(OrganizationOrmEntity)
     private readonly organizationsRepository: Repository<OrganizationOrmEntity>,
+    @Inject(USER_REPOSITORY)
+    private readonly userRepository: IUserRepository,
   ) {}
 
   async findAll(): Promise<Organization[]> {
@@ -22,7 +31,7 @@ export class TypeOrmOrganizationRepository implements IOrganizationRepository {
       order: { createdAt: 'ASC' },
     });
 
-    return entities.map((entity) => entity.toDomain());
+    return this.toDomainList(entities);
   }
 
   async findByUuid(uuid: string): Promise<Organization | null> {
@@ -30,7 +39,7 @@ export class TypeOrmOrganizationRepository implements IOrganizationRepository {
       where: { uuid },
     });
 
-    return entity ? entity.toDomain() : null;
+    return entity ? this.toDomainOne(entity) : null;
   }
 
   async findByName(name: string): Promise<Organization | null> {
@@ -38,7 +47,7 @@ export class TypeOrmOrganizationRepository implements IOrganizationRepository {
       where: { name },
     });
 
-    return entity ? entity.toDomain() : null;
+    return entity ? this.toDomainOne(entity) : null;
   }
 
   async findByInn(inn: string): Promise<Organization | null> {
@@ -46,14 +55,14 @@ export class TypeOrmOrganizationRepository implements IOrganizationRepository {
       where: { inn },
     });
 
-    return entity ? entity.toDomain() : null;
+    return entity ? this.toDomainOne(entity) : null;
   }
 
   async create(data: CreateOrganizationData): Promise<Organization> {
     const entity = OrganizationOrmEntity.fromCreate(data);
     const saved = await this.organizationsRepository.save(entity);
 
-    return saved.toDomain();
+    return this.toDomainOne(saved);
   }
 
   async update(
@@ -70,6 +79,31 @@ export class TypeOrmOrganizationRepository implements IOrganizationRepository {
       throw new Error(`Organization ${uuid} not found after update`);
     }
 
-    return entity.toDomain();
+    return this.toDomainOne(entity);
+  }
+
+  private async toDomainOne(
+    entity: OrganizationOrmEntity,
+  ): Promise<Organization> {
+    const organizations = await this.toDomainList([entity]);
+    const organization = organizations[0];
+
+    if (!organization) {
+      throw new Error(`Failed to map organization ${entity.uuid}`);
+    }
+
+    return organization;
+  }
+
+  private async toDomainList(
+    entities: OrganizationOrmEntity[],
+  ): Promise<Organization[]> {
+    const countsByOrgId = await this.userRepository.countByOrgIds(
+      entities.map((entity) => entity.uuid),
+    );
+
+    return entities.map((entity) =>
+      entity.toDomain(countsByOrgId.get(entity.uuid) ?? EMPTY_COUNTS),
+    );
   }
 }

@@ -68,6 +68,16 @@ export class RegisterOrgUserUseCase {
       );
     }
 
+    const memberCounts = await this.userRepository.countByOrgId(
+      organization.uuid,
+    );
+
+    if (memberCounts.active >= organization.maxMembers) {
+      throw new ConflictException(
+        this.i18nService.translate('ERRORS.ORGANIZATION_MEMBER_LIMIT_REACHED'),
+      );
+    }
+
     const existingUser = await this.userRepository.findByLogin(data.login);
 
     if (existingUser) {

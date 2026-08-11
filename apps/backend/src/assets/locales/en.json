@@ -12,6 +12,7 @@
     "ORGANIZATION_NAME_TAKEN": "Organization name \"{name}\" is already taken",
     "ORGANIZATION_INN_TAKEN": "Organization INN \"{inn}\" is already taken",
     "ORGANIZATION_INVITE_INVALID": "Invite link is invalid or has expired",
+    "ORGANIZATION_MEMBER_LIMIT_REACHED": "Organization member limit has been reached",
     "EMAIL_ALREADY_SET": "Email is already set and cannot be changed",
     "EMAIL_ALREADY_TAKEN": "Email \"{email}\" is already taken",
     "USER_HAS_NO_ORGANIZATION": "User is not assigned to an organization",

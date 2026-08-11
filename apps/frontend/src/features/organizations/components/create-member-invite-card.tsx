@@ -25,7 +25,13 @@ function formatRemaining(ms: number): string {
   return `${minutes}:${seconds.toString().padStart(2, "0")}`;
 }
 
-export function CreateMemberInviteCard() {
+type CreateMemberInviteCardProps = {
+  isAtMemberLimit?: boolean;
+};
+
+export function CreateMemberInviteCard({
+  isAtMemberLimit = false,
+}: CreateMemberInviteCardProps) {
   const [invite, setInvite] =
     useState<OrganizationMemberInviteResponseType | null>(null);
   const [now, setNow] = useState(0);
@@ -64,6 +70,10 @@ export function CreateMemberInviteCard() {
   }, [invite]);
 
   const generateInvite = async () => {
+    if (isAtMemberLimit) {
+      return;
+    }
+
     setIsSubmitting(true);
     setError(null);
 
@@ -101,6 +111,16 @@ export function CreateMemberInviteCard() {
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
+        {isAtMemberLimit ? (
+          <Alert>
+            <AlertTitle>Лимит участников</AlertTitle>
+            <AlertDescription>
+              Достигнут лимит активных участников организации. Уберите
+              участника, чтобы освободить место для нового.
+            </AlertDescription>
+          </Alert>
+        ) : null}
+
         {error ? (
           <Alert variant="destructive">
             <AlertTitle>Ошибка</AlertTitle>
@@ -108,7 +128,7 @@ export function CreateMemberInviteCard() {
           </Alert>
         ) : null}
 
-        {invite ? (
+        {invite && !isAtMemberLimit ? (
           <div className="space-y-3 rounded-lg border border-border/80 p-4">
             {remainingMs > 0 ? (
               <>
@@ -135,7 +155,11 @@ export function CreateMemberInviteCard() {
         ) : null}
       </CardContent>
       <CardFooter>
-        <Button type="button" onClick={generateInvite} disabled={isSubmitting}>
+        <Button
+          type="button"
+          onClick={generateInvite}
+          disabled={isSubmitting || isAtMemberLimit}
+        >
           {isSubmitting ? "Генерируем..." : "Сгенерировать"}
         </Button>
       </CardFooter>

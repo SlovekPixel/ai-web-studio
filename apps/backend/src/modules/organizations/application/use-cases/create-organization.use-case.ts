@@ -72,6 +72,18 @@ export class CreateOrganizationUseCase {
     const organization = await this.organizationRepository.create(data);
     await this.userRepository.updateOrgId(data.ownerId, organization.uuid);
 
-    return organization.toPublic();
+    const created = await this.organizationRepository.findByUuid(
+      organization.uuid,
+    );
+
+    if (!created) {
+      throw new NotFoundException(
+        this.i18nService.translate('ERRORS.ORGANIZATION_NOT_FOUND', {
+          organizationUuid: organization.uuid,
+        }),
+      );
+    }
+
+    return created.toPublic();
   }
 }

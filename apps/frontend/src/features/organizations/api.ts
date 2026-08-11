@@ -43,6 +43,12 @@ export const organizationsApi = {
     });
   },
 
+  deactivateMember(userId: string): Promise<PublicUserType> {
+    return api.post(apiRoutes.organizations.deactivateMember(userId), {
+      responseSchema: PublicUserSchema,
+    });
+  },
+
   createInvite(
     body: CreateOrganizationInviteRequestType,
   ): Promise<OrganizationInviteResponseType> {

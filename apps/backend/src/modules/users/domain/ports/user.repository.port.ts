@@ -12,8 +12,17 @@ export type UpdateProfileData = {
   email?: string;
 };
 
+export type OrganizationMemberCounts = {
+  all: number;
+  active: number;
+};
+
 export interface IUserRepository {
   count(): Promise<number>;
+  countByOrgId(orgId: string): Promise<OrganizationMemberCounts>;
+  countByOrgIds(
+    orgIds: string[],
+  ): Promise<Map<string, OrganizationMemberCounts>>;
   findAll(): Promise<User[]>;
   findByOrgId(orgId: string): Promise<User[]>;
   findById(id: string): Promise<User | null>;

@@ -15,6 +15,11 @@ export default function OrganizationsPage() {
   const canInviteMembers = Boolean(me.data?.isOrgOwner);
   const hasOrganization = Boolean(me.data?.organization);
   const members = useOrganizationMembers(hasOrganization);
+  const organization = me.data?.organization;
+  const isAtMemberLimit = Boolean(
+    organization &&
+      organization.currentMembersActive >= organization.maxMembers,
+  );
 
   return (
     <AppShell
@@ -23,19 +28,24 @@ export default function OrganizationsPage() {
     >
       <div className="w-full">
         <QueryState isLoading={me.isLoading} error={me.error}>
-          {me.data?.organization ? (
+          {organization ? (
             <div className="grid w-full gap-6 lg:grid-cols-2 lg:items-start">
               <div className="flex min-w-0 flex-col gap-6">
-                {canInviteMembers ? <CreateMemberInviteCard /> : null}
+                {canInviteMembers ? (
+                  <CreateMemberInviteCard isAtMemberLimit={isAtMemberLimit} />
+                ) : null}
                 <OrganizationDetails
-                  organization={me.data.organization}
+                  organization={organization}
                   showEdit={canEditAsAdmin}
                 />
               </div>
               <div className="min-w-0">
                 <QueryState isLoading={members.isLoading} error={members.error}>
                   {members.data ? (
-                    <OrganizationMembersTable members={members.data} />
+                    <OrganizationMembersTable
+                      members={members.data}
+                      canManageMembers={canInviteMembers}
+                    />
                   ) : null}
                 </QueryState>
               </div>

@@ -2,14 +2,18 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
+import { Organization } from '~/modules/organizations/domain/entities/organization.entity';
 import { OrganizationOrmEntity } from '~/modules/organizations/infrastructure/persistence/typeorm/organization.orm-entity';
 import { User } from '~/modules/users/domain/entities/user.entity';
 import type {
   CreateUserData,
   IUserRepository,
+  OrganizationMemberCounts,
   UpdateProfileData,
 } from '~/modules/users/domain/ports/user.repository.port';
 import { UserOrmEntity } from '~/modules/users/infrastructure/persistence/typeorm/user.orm-entity';
+
+const EMPTY_COUNTS: OrganizationMemberCounts = { all: 0, active: 0 };
 
 @Injectable()
 export class TypeOrmUserRepository implements IUserRepository {
@@ -22,23 +26,63 @@ export class TypeOrmUserRepository implements IUserRepository {
     return this.usersRepository.count();
   }
 
+  async countByOrgId(orgId: string): Promise<OrganizationMemberCounts> {
+    const counts = await this.countByOrgIds([orgId]);
+    return counts.get(orgId) ?? EMPTY_COUNTS;
+  }
+
+  async countByOrgIds(
+    orgIds: string[],
+  ): Promise<Map<string, OrganizationMemberCounts>> {
+    const uniqueOrgIds = [...new Set(orgIds.filter(Boolean))];
+    const result = new Map<string, OrganizationMemberCounts>(
+      uniqueOrgIds.map((orgId) => [orgId, { ...EMPTY_COUNTS }]),
+    );
+
+    if (uniqueOrgIds.length === 0) {
+      return result;
+    }
+
+    const rows = await this.usersRepository
+      .createQueryBuilder('user')
+      .innerJoin('user.organization', 'organization')
+      .select('organization.uuid', 'orgId')
+      .addSelect('COUNT(*)::int', 'all')
+      .addSelect(
+        'COALESCE(SUM(CASE WHEN user.active = true THEN 1 ELSE 0 END), 0)::int',
+        'active',
+      )
+      .where('organization.uuid IN (:...orgIds)', { orgIds: uniqueOrgIds })
+      .groupBy('organization.uuid')
+      .getRawMany<{ orgId: string; all: string; active: string }>();
+
+    for (const row of rows) {
+      result.set(row.orgId, {
+        all: Number(row.all),
+        active: Number(row.active),
+      });
+    }
+
+    return result;
+  }
+
   async findAll(): Promise<User[]> {
     const entities = await this.usersRepository.find({
       relations: { organization: true },
       order: { createdAt: 'ASC' },
     });
 
-    return entities.map((entity) => entity.toDomain());
+    return this.toDomainList(entities);
   }
 
   async findByOrgId(orgId: string): Promise<User[]> {
     const entities = await this.usersRepository.find({
       where: { organization: { uuid: orgId } },
       relations: { organization: true },
-      order: { createdAt: 'ASC' },
+      order: { active: 'DESC', createdAt: 'ASC' },
     });
 
-    return entities.map((entity) => entity.toDomain());
+    return this.toDomainList(entities);
   }
 
   async findById(id: string): Promise<User | null> {
@@ -47,7 +91,7 @@ export class TypeOrmUserRepository implements IUserRepository {
       relations: { organization: true },
     });
 
-    return entity ? entity.toDomain() : null;
+    return entity ? this.toDomainOne(entity) : null;
   }
 
   async findByLogin(login: string): Promise<User | null> {
@@ -56,7 +100,7 @@ export class TypeOrmUserRepository implements IUserRepository {
       relations: { organization: true },
     });
 
-    return entity ? entity.toDomain() : null;
+    return entity ? this.toDomainOne(entity) : null;
   }
 
   async findByEmail(email: string): Promise<User | null> {
@@ -65,7 +109,7 @@ export class TypeOrmUserRepository implements IUserRepository {
       relations: { organization: true },
     });
 
-    return entity ? entity.toDomain() : null;
+    return entity ? this.toDomainOne(entity) : null;
   }
 
   async create(data: CreateUserData): Promise<User> {
@@ -96,7 +140,7 @@ export class TypeOrmUserRepository implements IUserRepository {
       throw new Error(`User ${userId} not found after org assignment`);
     }
 
-    return updated.toDomain();
+    return this.toDomainOne(updated);
   }
 
   async updateLoginAt(userId: string, loginAt: Date): Promise<User> {
@@ -111,7 +155,7 @@ export class TypeOrmUserRepository implements IUserRepository {
       throw new Error(`User ${userId} not found after login_at update`);
     }
 
-    return entity.toDomain();
+    return this.toDomainOne(entity);
   }
 
   async updateActive(userId: string, active: boolean): Promise<User> {
@@ -126,7 +170,7 @@ export class TypeOrmUserRepository implements IUserRepository {
       throw new Error(`User ${userId} not found after active update`);
     }
 
-    return entity.toDomain();
+    return this.toDomainOne(entity);
   }
 
   async updateProfile(userId: string, data: UpdateProfileData): Promise<User> {
@@ -141,7 +185,7 @@ export class TypeOrmUserRepository implements IUserRepository {
       throw new Error(`User ${userId} not found after profile update`);
     }
 
-    return entity.toDomain();
+    return this.toDomainOne(entity);
   }
 
   async updatePassword(userId: string, hashPassword: string): Promise<User> {
@@ -156,6 +200,57 @@ export class TypeOrmUserRepository implements IUserRepository {
       throw new Error(`User ${userId} not found after password update`);
     }
 
-    return entity.toDomain();
+    return this.toDomainOne(entity);
+  }
+
+  private async toDomainOne(entity: UserOrmEntity): Promise<User> {
+    const users = await this.toDomainList([entity]);
+    const user = users[0];
+
+    if (!user) {
+      throw new Error(`Failed to map user ${entity.id}`);
+    }
+
+    return user;
+  }
+
+  private async toDomainList(entities: UserOrmEntity[]): Promise<User[]> {
+    const orgIds = entities
+      .map((entity) => entity.orgId ?? entity.organization?.uuid)
+      .filter((orgId): orgId is string => Boolean(orgId));
+    const countsByOrgId = await this.countByOrgIds(orgIds);
+
+    return entities.map((entity) => {
+      const orgId = entity.orgId ?? entity.organization?.uuid ?? null;
+      const organization = this.mapOrganization(
+        entity.organization,
+        orgId ? (countsByOrgId.get(orgId) ?? EMPTY_COUNTS) : EMPTY_COUNTS,
+      );
+
+      return new User(
+        entity.id,
+        entity.login,
+        entity.hashPassword,
+        entity.email,
+        entity.fullName,
+        entity.active,
+        orgId,
+        organization,
+        entity.loginAt,
+        entity.createdAt,
+        entity.updatedAt,
+      );
+    });
+  }
+
+  private mapOrganization(
+    organization: OrganizationOrmEntity | null,
+    counts: OrganizationMemberCounts,
+  ): Organization | null {
+    if (!organization) {
+      return null;
+    }
+
+    return organization.toDomain(counts);
   }
 }

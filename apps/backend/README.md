@@ -27,15 +27,18 @@ pnpm --filter backend start:dev
 
 ## Docker
 
-Полный стек (postgres, redis, backend):
+Полный стек (postgres, redis, backend, frontend):
 
 ```bash
 cp .env.example .env
 docker compose up --build
 ```
 
+Образы собираются из `apps/backend/Dockerfile` и `apps/frontend/Dockerfile` (`turbo prune` + multi-stage).
+
 - API: `http://localhost:3000/api`
 - Swagger: `http://localhost:3000/api/docs`
+- Frontend: `http://localhost:3001`
 
 ## Архитектура
 

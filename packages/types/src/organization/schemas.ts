@@ -38,6 +38,18 @@ export const PublicOrganizationSchema = z.object({
   inn: z.string().nullable().meta({ title: 'INN', example: '7707083893' }),
   ownerId: organizationOwnerIdSchema,
   active: z.boolean().meta({ title: 'Active', example: true }),
+  maxMembers: z.number().int().positive().meta({
+    title: 'Max Members',
+    example: 10,
+  }),
+  currentMembersAll: z.number().int().nonnegative().meta({
+    title: 'Current Members (all)',
+    example: 3,
+  }),
+  currentMembersActive: z.number().int().nonnegative().meta({
+    title: 'Current Members (active)',
+    example: 2,
+  }),
   createdAt: z.iso
     .datetime()
     .meta({ title: 'Created At', example: '2026-01-01T00:00:00.000Z' }),

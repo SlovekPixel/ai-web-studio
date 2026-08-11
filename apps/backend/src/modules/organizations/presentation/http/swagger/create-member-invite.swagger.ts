@@ -1,5 +1,6 @@
 import { applyDecorators } from '@nestjs/common';
 import {
+  ApiConflictResponse,
   ApiCreatedResponse,
   ApiForbiddenResponse,
   ApiOperation,
@@ -14,7 +15,7 @@ export function CreateMemberInviteSwagger(): MethodDecorator {
     ApiOperation({
       summary: 'Создать приглашение участника организации',
       description:
-        'Доступно только владельцу организации. Генерирует одноразовую ссылку на 2 минуты; предыдущая активная ссылка инвалидируется.',
+        'Доступно только владельцу организации. Генерирует одноразовую ссылку на 2 минуты; предыдущая активная ссылка инвалидируется. Нельзя создать, если достигнут лимит активных участников.',
     }),
     ApiCreatedResponse({
       description: 'Приглашение успешно создано',
@@ -22,6 +23,10 @@ export function CreateMemberInviteSwagger(): MethodDecorator {
     }),
     ApiForbiddenResponse({
       description: 'Пользователь не является владельцем организации',
+      type: ExceptionResponseDto,
+    }),
+    ApiConflictResponse({
+      description: 'Достигнут лимит активных участников организации',
       type: ExceptionResponseDto,
     }),
     DefaultApiResponses(),
